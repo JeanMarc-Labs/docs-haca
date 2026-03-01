@@ -1,0 +1,4841 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>H.A.C.A Documentation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@300;400;500;600&display=swap"
+    rel="stylesheet">
+  <style>
+    /* ─── TOKENS ─────────────────────────────────────────── */
+    :root {
+      --bg: #0e0e16;
+      --bg2: #13131e;
+      --bg3: #1a1a28;
+      --sidebar: #0b0b12;
+      --line: rgba(255, 255, 255, 0.07);
+      --line2: rgba(255, 255, 255, 0.12);
+      --orange: #ff6b35;
+      --orange2: #ff8c5a;
+      --gold: #ffb347;
+      --green: #4ade80;
+      --yellow: #fbbf24;
+      --red: #f87171;
+      --blue: #60a5fa;
+      --purple: #a78bfa;
+      --text: #e2e2ee;
+      --text2: rgba(226, 226, 238, 0.6);
+      --text3: rgba(226, 226, 238, 0.35);
+      --mono: 'IBM Plex Mono', monospace;
+      --sans: 'Inter', sans-serif;
+      --head: 'Syne', sans-serif;
+      --sidebar-w: 270px;
+      --topbar-h: 52px;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+      font-family: var(--sans);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* ─── TOPBAR ─────────────────────────────────────────── */
+    .topbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 200;
+      height: var(--topbar-h);
+      background: rgba(11, 11, 18, 0.95);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      padding: 0 1.25rem 0 calc(var(--sidebar-w) + 1.25rem);
+      gap: 0.75rem;
+    }
+
+    .topbar-logo {
+      font-family: var(--head);
+      font-weight: 800;
+      font-size: 1rem;
+      background: linear-gradient(135deg, var(--orange), var(--gold));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      flex-shrink: 0;
+    }
+
+    .topbar-sep {
+      flex: 1;
+    }
+
+    .topbar-version {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      color: var(--orange);
+      background: rgba(255, 107, 53, 0.1);
+      border: 1px solid rgba(255, 107, 53, 0.25);
+      padding: 3px 10px;
+      border-radius: 99px;
+      white-space: nowrap;
+    }
+
+    .lang-switch {
+      display: flex;
+      gap: 3px;
+      background: var(--bg3);
+      border: 1px solid var(--line2);
+      border-radius: 8px;
+      padding: 3px;
+      flex-shrink: 0;
+    }
+
+    .lang-btn {
+      font-family: var(--head);
+      font-weight: 700;
+      font-size: 0.7rem;
+      letter-spacing: 0.05em;
+      padding: 5px 10px;
+      border-radius: 5px;
+      border: none;
+      cursor: pointer;
+      transition: all .2s;
+      background: transparent;
+      color: var(--text2);
+      white-space: nowrap;
+    }
+
+    .lang-btn.active {
+      background: linear-gradient(135deg, var(--orange), var(--gold));
+      color: #fff;
+    }
+
+    /* ─── SIDEBAR ─────────────────────────────────────────── */
+    .sidebar {
+      position: fixed;
+      top: var(--topbar-h);
+      left: 0;
+      bottom: 0;
+      width: var(--sidebar-w);
+      background: var(--sidebar);
+      border-right: 1px solid var(--line);
+      overflow-y: auto;
+      overflow-x: hidden;
+      z-index: 100;
+      scrollbar-width: thin;
+      scrollbar-color: var(--bg3) transparent;
+      transition: transform .3s ease;
+    }
+
+    .sidebar-section {
+      padding: 1.25rem 0 0.5rem;
+    }
+
+    .sidebar-label {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text3);
+      padding: 0 1.25rem;
+      margin-bottom: 0.4rem;
+    }
+
+    .nav-item {
+      display: block;
+      width: 100%;
+      text-decoration: none;
+      cursor: pointer;
+      font-size: 0.82rem;
+      color: var(--text2);
+      padding: 0.45rem 1.25rem;
+      border-left: 2px solid transparent;
+      transition: all .15s;
+      background: none;
+      border-top: none;
+      border-right: none;
+      border-bottom: none;
+      text-align: left;
+      font-family: var(--sans);
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .nav-item:hover {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .nav-item.active {
+      color: var(--orange);
+      border-left-color: var(--orange);
+      background: rgba(255, 107, 53, 0.07);
+      font-weight: 600;
+    }
+
+    .nav-sub {
+      font-size: 0.78rem;
+      padding-left: 2.25rem;
+      color: var(--text3);
+    }
+
+    .nav-sub.active {
+      color: var(--orange2);
+      border-left-color: var(--orange2);
+    }
+
+    /* ─── CONTENT ─────────────────────────────────────────── */
+    .content {
+      margin-left: var(--sidebar-w);
+      padding-top: var(--topbar-h);
+      min-height: 100vh;
+    }
+
+    .page {
+      display: none;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    .doc-section {
+      max-width: 100%;
+      padding: 2.5rem 2.5rem 4rem;
+    }
+
+    /* ─── TYPOGRAPHY ─────────────────────────────────────── */
+    .doc-section h1 {
+      font-family: var(--head);
+      font-size: clamp(1.6rem, 4vw, 2rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      margin-bottom: 0.5rem;
+      color: var(--text);
+    }
+
+    .doc-section h1 .accent {
+      background: linear-gradient(135deg, var(--orange), var(--gold));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .page-tag {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--orange);
+      background: rgba(255, 107, 53, 0.1);
+      border: 1px solid rgba(255, 107, 53, 0.2);
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 99px;
+      margin-bottom: 1rem;
+    }
+
+    .doc-section h2 {
+      font-family: var(--head);
+      font-size: clamp(1.05rem, 3vw, 1.3rem);
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      margin: 2.5rem 0 0.75rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--line);
+      color: var(--text);
+    }
+
+    .doc-section h2:first-of-type {
+      margin-top: 2rem;
+      border-top: none;
+      padding-top: 0;
+    }
+
+    .doc-section h3 {
+      font-family: var(--head);
+      font-size: 1rem;
+      font-weight: 700;
+      margin: 1.5rem 0 0.5rem;
+      color: var(--text);
+    }
+
+    .doc-section p {
+      color: var(--text2);
+      margin-bottom: 1rem;
+      font-size: 0.9rem;
+    }
+
+    .doc-section strong {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .doc-section a {
+      color: var(--orange2);
+      text-decoration: none;
+    }
+
+    .doc-section a:hover {
+      text-decoration: underline;
+    }
+
+    .doc-section ul,
+    .doc-section ol {
+      color: var(--text2);
+      font-size: 0.9rem;
+      padding-left: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .doc-section li {
+      margin-bottom: 0.25rem;
+    }
+
+    .doc-section li strong {
+      color: var(--text);
+    }
+
+    .lead {
+      font-size: clamp(0.9rem, 2.5vw, 1rem) !important;
+      color: var(--text2);
+      max-width: 600px;
+      margin-bottom: 2rem !important;
+    }
+
+    /* ─── HERO BAND ─────────────────────────────────────── */
+    .hero-band {
+      background: linear-gradient(135deg, var(--bg3) 0%, rgba(26, 26, 40, 0.8) 100%);
+      border: 1px solid var(--line2);
+      border-radius: 14px;
+      padding: 2rem 1.75rem;
+      margin-bottom: 2.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-band::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 80% 50%, rgba(255, 107, 53, 0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-band h1 {
+      font-size: clamp(1.8rem, 5vw, 2.2rem);
+      position: relative;
+    }
+
+    .hero-band p {
+      font-size: clamp(0.85rem, 2.5vw, 1rem);
+      max-width: 500px;
+      position: relative;
+    }
+
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 1rem;
+      position: relative;
+    }
+
+    .badge {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      font-weight: 500;
+      padding: 4px 12px;
+      border-radius: 6px;
+      letter-spacing: 0.05em;
+    }
+
+    .b-orange {
+      background: rgba(255, 107, 53, 0.12);
+      color: var(--orange);
+      border: 1px solid rgba(255, 107, 53, 0.3);
+    }
+
+    .b-blue {
+      background: rgba(96, 165, 250, 0.1);
+      color: var(--blue);
+      border: 1px solid rgba(96, 165, 250, 0.25);
+    }
+
+    .b-green {
+      background: rgba(74, 222, 128, 0.08);
+      color: var(--green);
+      border: 1px solid rgba(74, 222, 128, 0.2);
+    }
+
+    /* ─── ADMONITIONS ─────────────────────────────────── */
+    .adm {
+      display: flex;
+      gap: 0.75rem;
+      padding: 0.9rem 1.1rem;
+      border-radius: 9px;
+      margin: 1.25rem 0;
+      font-size: 0.875rem;
+      line-height: 1.6;
+      align-items: flex-start;
+    }
+
+    .adm-icon {
+      font-size: 1rem;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .adm-body {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .adm-title {
+      font-weight: 700;
+      margin-bottom: 3px;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .adm p:last-child {
+      margin-bottom: 0;
+    }
+
+    .adm-tip {
+      background: rgba(74, 222, 128, 0.07);
+      border-left: 3px solid var(--green);
+    }
+
+    .adm-warning {
+      background: rgba(251, 191, 36, 0.08);
+      border-left: 3px solid var(--yellow);
+    }
+
+    .adm-note {
+      background: rgba(96, 165, 250, 0.08);
+      border-left: 3px solid var(--blue);
+    }
+
+    .adm-danger {
+      background: rgba(248, 113, 113, 0.08);
+      border-left: 3px solid var(--red);
+    }
+
+    .adm-tip .adm-title {
+      color: var(--green);
+    }
+
+    .adm-warning .adm-title {
+      color: var(--yellow);
+    }
+
+    .adm-note .adm-title {
+      color: var(--blue);
+    }
+
+    .adm-danger .adm-title {
+      color: var(--red);
+    }
+
+    /* ─── CODE BLOCKS ─────────────────────────────────── */
+    .code-wrap {
+      border-radius: 10px;
+      overflow: hidden;
+      margin: 1.25rem 0;
+      border: 1px solid var(--line2);
+    }
+
+    .code-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--bg3);
+      padding: 0.55rem 1rem;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .code-dots {
+      display: flex;
+      gap: 5px;
+    }
+
+    .code-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .code-dot:nth-child(1) {
+      background: #f87171;
+    }
+
+    .code-dot:nth-child(2) {
+      background: #fbbf24;
+    }
+
+    .code-dot:nth-child(3) {
+      background: #4ade80;
+    }
+
+    .code-lang {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      color: var(--text3);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .code-wrap pre {
+      background: var(--bg);
+      padding: 1rem 1.25rem;
+      font-family: var(--mono);
+      font-size: clamp(0.72rem, 1.8vw, 0.8rem);
+      line-height: 1.65;
+      overflow-x: auto;
+      color: var(--text2);
+      margin: 0;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .c-kw {
+      color: var(--purple);
+    }
+
+    .c-str {
+      color: var(--green);
+    }
+
+    .c-cm {
+      color: var(--text3);
+      font-style: italic;
+    }
+
+    .c-key {
+      color: var(--blue);
+    }
+
+    .c-num {
+      color: var(--gold);
+    }
+
+    .c-op {
+      color: var(--orange2);
+    }
+
+    .c-add {
+      color: var(--green);
+      background: rgba(74, 222, 128, 0.08);
+      display: block;
+    }
+
+    .c-del {
+      color: var(--red);
+      background: rgba(248, 113, 113, 0.08);
+      display: block;
+    }
+
+    code {
+      font-family: var(--mono);
+      font-size: 0.8em;
+      background: var(--bg3);
+      border: 1px solid var(--line2);
+      padding: 2px 7px;
+      border-radius: 5px;
+      color: var(--orange2);
+      white-space: nowrap;
+      word-break: break-all;
+    }
+
+    /* ─── TABLES ─────────────────────────────────────── */
+    .table-wrap {
+      overflow-x: auto;
+      margin: 1.25rem 0;
+      border-radius: 10px;
+      border: 1px solid var(--line2);
+      -webkit-overflow-scrolling: touch;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: clamp(0.78rem, 2vw, 0.85rem);
+      min-width: 400px;
+    }
+
+    thead {
+      background: var(--bg3);
+    }
+
+    th {
+      font-family: var(--mono);
+      font-size: clamp(0.58rem, 1.5vw, 0.62rem);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text3);
+      padding: 0.7rem 1rem;
+      text-align: left;
+      border-bottom: 1px solid var(--line2);
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 0.65rem 1rem;
+      border-bottom: 1px solid var(--line);
+      color: var(--text2);
+      vertical-align: top;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    td code {
+      font-size: 0.75rem;
+    }
+
+    /* ─── SEVERITY CHIPS ─────────────────────────────── */
+    .sev {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 8px;
+      border-radius: 99px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      font-family: var(--mono);
+      white-space: nowrap;
+    }
+
+    .sev-h {
+      background: rgba(248, 113, 113, 0.15);
+      color: var(--red);
+    }
+
+    .sev-m {
+      background: rgba(251, 191, 36, 0.12);
+      color: var(--yellow);
+    }
+
+    .sev-l {
+      background: rgba(96, 165, 250, 0.1);
+      color: var(--blue);
+    }
+
+    .fix {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      padding: 2px 8px;
+      border-radius: 5px;
+      white-space: nowrap;
+    }
+
+    .fix-a {
+      background: rgba(74, 222, 128, 0.1);
+      color: var(--green);
+    }
+
+    .fix-i {
+      background: rgba(251, 191, 36, 0.1);
+      color: var(--yellow);
+    }
+
+    .fix-n {
+      color: var(--text3);
+    }
+
+    /* ─── INSTALL STEPS ─────────────────────────────── */
+    .steps {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      margin: 1.5rem 0;
+    }
+
+    .step {
+      display: grid;
+      grid-template-columns: 52px 1fr;
+      gap: 1rem;
+      padding-bottom: 2rem;
+      position: relative;
+    }
+
+    .step:not(:last-child)::before {
+      content: '';
+      position: absolute;
+      left: 25px;
+      top: 52px;
+      bottom: 0;
+      width: 2px;
+      background: linear-gradient(to bottom, rgba(255, 107, 53, 0.4), transparent);
+    }
+
+    .step-n {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      background: var(--bg3);
+      border: 2px solid rgba(255, 107, 53, 0.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--head);
+      font-weight: 800;
+      font-size: 1.1rem;
+      color: var(--orange);
+      position: relative;
+      z-index: 1;
+    }
+
+    .step-body {
+      padding-top: 0.7rem;
+    }
+
+    .step-body h3 {
+      margin-top: 0;
+      font-size: 0.95rem;
+    }
+
+    .step-body p {
+      font-size: 0.875rem;
+      margin-bottom: 0.5rem;
+    }
+
+    /* ─── FEATURE GRID ─────────────────────────────── */
+    .feat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(min(220px, 100%), 1fr));
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+
+    .feat-card {
+      background: var(--bg2);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 1.25rem;
+      transition: border-color .2s, transform .2s;
+    }
+
+    .feat-card:hover {
+      border-color: rgba(255, 107, 53, 0.3);
+      transform: translateY(-2px);
+    }
+
+    .feat-icon {
+      font-size: 1.5rem;
+      margin-bottom: 0.65rem;
+    }
+
+    .feat-card h3 {
+      font-size: 0.9rem;
+      margin-bottom: 0.3rem;
+      margin-top: 0;
+    }
+
+    .feat-card p {
+      font-size: 0.8rem;
+      margin: 0;
+    }
+
+    /* ─── ARCH GRID ─────────────────────────────────── */
+    .arch-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(min(200px, 100%), 1fr));
+      gap: 0.75rem;
+      margin: 1.25rem 0;
+    }
+
+    .arch-card {
+      background: var(--bg2);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 1rem;
+      transition: border-color .2s;
+    }
+
+    .arch-card:hover {
+      border-color: rgba(255, 107, 53, 0.25);
+    }
+
+    .arch-file {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      color: var(--orange2);
+      margin-bottom: 0.4rem;
+      font-weight: 500;
+    }
+
+    .arch-desc {
+      font-size: 0.78rem;
+      color: var(--text3);
+      line-height: 1.5;
+    }
+
+    /* ─── SCORE WIDGET ─────────────────────────────── */
+    .score-widget {
+      display: flex;
+      gap: 2rem;
+      align-items: center;
+      background: var(--bg2);
+      border: 1px solid var(--line2);
+      border-radius: 12px;
+      padding: 1.75rem;
+      margin: 1.5rem 0;
+      flex-wrap: wrap;
+    }
+
+    .score-ring {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      background: conic-gradient(var(--green) 306deg, var(--bg3) 0);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .score-ring::before {
+      content: '';
+      position: absolute;
+      inset: 16px;
+      border-radius: 50%;
+      background: var(--bg2);
+    }
+
+    .score-inner {
+      position: relative;
+      text-align: center;
+    }
+
+    .score-num {
+      font-family: var(--head);
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--green);
+      display: block;
+      line-height: 1;
+    }
+
+    .score-sub {
+      font-family: var(--mono);
+      font-size: 1.2rem;
+      color: var(--text3);
+      letter-spacing: 0.1em;
+    }
+
+    .score-rows {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+
+    .score-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.85rem;
+    }
+
+    .scolor {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .score-row em {
+      color: var(--text3);
+      font-size: 0.78rem;
+      font-style: normal;
+    }
+
+    /* ─── CHECKLIST ─────────────────────────────────── */
+    .checklist {
+      list-style: none;
+      padding: 0;
+    }
+
+    .checklist li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.6rem;
+      padding: 0.35rem 0;
+      font-size: 0.875rem;
+      color: var(--text2);
+    }
+
+    .checklist li::before {
+      content: '☐';
+      font-size: 1rem;
+      color: var(--text3);
+      flex-shrink: 0;
+    }
+
+    /* ─── TABS ─────────────────────────────────────── */
+    .tab-nav {
+      display: flex;
+      gap: 2px;
+      background: var(--bg3);
+      border: 1px solid var(--line2);
+      border-radius: 9px;
+      padding: 3px;
+      margin-bottom: 1rem;
+      overflow-x: auto;
+      flex-wrap: nowrap;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+
+    .tab-nav::-webkit-scrollbar {
+      display: none;
+    }
+
+    .tab-btn {
+      font-family: var(--head);
+      font-weight: 700;
+      font-size: 0.75rem;
+      letter-spacing: 0.02em;
+      padding: 7px 12px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      transition: all .2s;
+      background: transparent;
+      color: var(--text3);
+      white-space: nowrap;
+      flex-shrink: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .tab-btn.active {
+      background: linear-gradient(135deg, var(--orange), var(--gold));
+      color: #fff;
+    }
+
+    .tab-panel {
+      display: none;
+    }
+
+    .tab-panel.active {
+      display: block;
+    }
+
+    /* ─── SEPARATOR ─────────────────────────────────── */
+    hr {
+      border: none;
+      border-top: 1px solid var(--line);
+      margin: 2rem 0;
+    }
+
+    /* ─── MENU TOGGLE ─────────────────────────────── */
+    .menu-toggle {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      background: var(--bg3);
+      border: 1px solid var(--line2);
+      border-radius: 7px;
+      cursor: pointer;
+      flex-shrink: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* Overlay for mobile sidebar */
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 99;
+      background: rgba(0, 0, 0, 0.5);
+    }
+
+    .sidebar-overlay.active {
+      display: block;
+    }
+
+    /* ─── SCROLLBAR ─────────────────────────────────── */
+    ::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--bg3);
+      border-radius: 99px;
+    }
+
+    /* ═══════════════════════════════════════════════════
+   RESPONSIVE BREAKPOINTS
+═══════════════════════════════════════════════════ */
+
+    /* ── Tablet (≤ 1024px) ─────────────────────────── */
+    @media (max-width: 1024px) {
+      :root {
+        --sidebar-w: 240px;
+      }
+
+      .doc-section {
+        padding: 2rem 2rem 3.5rem;
+      }
+    }
+
+    /* ── Mobile landscape / small tablet (≤ 768px) ── */
+    @media (max-width: 768px) {
+      :root {
+        --sidebar-w: 260px;
+      }
+
+      .topbar {
+        padding-left: 1rem;
+        padding-right: 1rem;
+      }
+
+      .menu-toggle {
+        display: flex;
+        margin-right: 0.25rem;
+      }
+
+      .sidebar {
+        transform: translateX(-100%);
+        box-shadow: 4px 0 24px rgba(0, 0, 0, 0.4);
+      }
+
+      .sidebar.open {
+        transform: translateX(0);
+      }
+
+      .content {
+        margin-left: 0;
+      }
+
+      .doc-section {
+        padding: 1.5rem 1.25rem 3rem;
+      }
+
+      /* Tables stay readable on mobile via horizontal scroll */
+      .table-wrap {
+        border-radius: 8px;
+        margin: 1rem -0.25rem;
+      }
+
+      /* Steps narrower on mobile */
+      .step {
+        grid-template-columns: 44px 1fr;
+      }
+
+      .step-n {
+        width: 44px;
+        height: 44px;
+        font-size: 0.95rem;
+      }
+
+      .step:not(:last-child)::before {
+        left: 21px;
+      }
+
+      /* Score widget stacks on mobile */
+      .score-widget {
+        gap: 1.25rem;
+        padding: 1.25rem;
+      }
+
+      /* Hero band tighter */
+      .hero-band {
+        padding: 1.5rem 1.25rem;
+        border-radius: 10px;
+      }
+
+      /* Feature grid: 1 or 2 cols on mobile */
+      .feat-grid {
+        grid-template-columns: repeat(auto-fill, minmax(min(180px, 100%), 1fr));
+        gap: 0.75rem;
+      }
+
+      .arch-grid {
+        grid-template-columns: repeat(auto-fill, minmax(min(160px, 100%), 1fr));
+        gap: 0.5rem;
+      }
+
+      /* Admonitions */
+      .adm {
+        padding: 0.75rem 0.9rem;
+        font-size: 0.83rem;
+      }
+
+      /* Topbar version hidden on very small screens */
+      .topbar-version {
+        display: none;
+      }
+    }
+
+    /* ── Small mobile (≤ 480px) ─────────────────────── */
+    @media (max-width: 480px) {
+      .doc-section {
+        padding: 1.25rem 1rem 2.5rem;
+      }
+
+      .lang-btn {
+        padding: 5px 8px;
+        font-size: 0.65rem;
+      }
+
+      /* Code blocks: smaller font */
+      .code-wrap pre {
+        font-size: 0.7rem;
+        padding: 0.85rem 1rem;
+      }
+
+      /* Single-column feature grid */
+      .feat-grid {
+        grid-template-columns: 1fr;
+      }
+
+      /* Steps: minimal */
+      .step {
+        grid-template-columns: 40px 1fr;
+        gap: 0.75rem;
+      }
+
+      .step-n {
+        width: 40px;
+        height: 40px;
+        font-size: 0.9rem;
+      }
+
+      .step:not(:last-child)::before {
+        left: 19px;
+      }
+
+      /* h2 padding reduced */
+      .doc-section h2 {
+        padding-top: 1.5rem;
+        margin: 2rem 0 0.6rem;
+      }
+
+      /* Score widget: column */
+      .score-widget {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .score-ring {
+        width: 100px;
+        height: 100px;
+      }
+
+      .score-num {
+        font-size: 1.6rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ═══════ TOPBAR ═══════ -->
+  <header class="topbar">
+    <button class="menu-toggle" id="menuToggle" aria-label="Menu" title="Menu">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="var(--text2)">
+        <rect y="2" width="16" height="2" rx="1" />
+        <rect y="7" width="16" height="2" rx="1" />
+        <rect y="12" width="16" height="2" rx="1" />
+      </svg>
+    </button>
+    <span class="topbar-logo">H.A.C.A</span>
+    <span class="topbar-sep"></span>
+    <span class="topbar-version">v1.0.0</span>
+    <div class="lang-switch">
+      <button class="lang-btn active" id="btn-fr" onclick="setLang('fr')">🇫🇷 FR</button>
+      <button class="lang-btn" id="btn-en" onclick="setLang('en')">🇬🇧 EN</button>
+    </div>
+  </header>
+
+  <!-- ═══════ SIDEBAR ═══════ -->
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+  <nav class="sidebar" id="sidebar">
+
+    <div class="sidebar-section">
+      <div class="sidebar-label" data-fr="Navigation" data-en="Navigation">Navigation</div>
+      <button class="nav-item active" onclick="nav('home')">
+        <span data-fr="🏠 Accueil" data-en="🏠 Home">🏠 Accueil</span>
+      </button>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-label" data-fr="Démarrage" data-en="Getting Started">Démarrage</div>
+      <button class="nav-item" onclick="nav('install')">
+        <span data-fr="⚙️ Installation" data-en="⚙️ Installation">⚙️ Installation</span>
+      </button>
+      <button class="nav-item nav-sub" onclick="nav('install','req')">
+        <span data-fr="Prérequis" data-en="Requirements">Prérequis</span>
+      </button>
+      <button class="nav-item nav-sub" onclick="nav('install','hacs')">
+        HACS
+      </button>
+      <button class="nav-item nav-sub" onclick="nav('install','manual')">
+        <span data-fr="Manuel" data-en="Manual">Manuel</span>
+      </button>
+      <button class="nav-item nav-sub" onclick="nav('install','trouble')">
+        <span data-fr="Dépannage" data-en="Troubleshooting">Dépannage</span>
+      </button>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-label" data-fr="Utilisation" data-en="Usage">Utilisation</div>
+      <button class="nav-item" onclick="nav('dashboard')">
+        <span data-fr="📊 Tableau de bord" data-en="📊 Dashboard">📊 Tableau de bord</span>
+      </button>
+      <button class="nav-item" onclick="nav('issues')">
+        <span data-fr="🐛 Analyse des issues" data-en="🐛 Issues">🐛 Analyse des issues</span>
+      </button>
+      <button class="nav-item nav-sub" onclick="nav('issues','types')">
+        <span data-fr="Types d'issues" data-en="Issue types">Types d'issues</span>
+      </button>
+      <button class="nav-item" onclick="nav('fixes')">
+        <span data-fr="🔧 Corrections auto" data-en="🔧 Auto-fixes">🔧 Corrections auto</span>
+      </button>
+      <button class="nav-item" onclick="nav('reports')">
+        <span data-fr="📈 Historique & Rapports" data-en="📈 History & Reports">📈 Historique & Rapports</span>
+      </button>
+      <button class="nav-item" onclick="nav('batteries')">
+        <span data-fr="🔋 Batteries & Recorder" data-en="🔋 Batteries & Recorder">🔋 Batteries & Recorder</span>
+      </button>
+      <button class="nav-item" onclick="nav('ai')">
+        <span data-fr="🤖 Intelligence artificielle" data-en="🤖 Artificial Intelligence">🤖 Intelligence
+          artificielle</span>
+      </button>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-label" data-fr="Référence" data-en="Reference">Référence</div>
+      <button class="nav-item" onclick="nav('ref-issues')">
+        <span data-fr="📋 Tous les types d'issues" data-en="📋 All issue types">📋 Tous les types</span>
+      </button>
+      <button class="nav-item" onclick="nav('ref-services')">
+        <span data-fr="⚡ Services HA" data-en="⚡ HA Services">⚡ Services HA</span>
+      </button>
+      <button class="nav-item" onclick="nav('ref-config')">
+        <span data-fr="🔩 Configuration" data-en="🔩 Configuration">🔩 Configuration</span>
+      </button>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-label" data-fr="Contribution" data-en="Contributing">Contribution</div>
+      <button class="nav-item" onclick="nav('arch')">
+        <span data-fr="🏗️ Architecture" data-en="🏗️ Architecture">🏗️ Architecture</span>
+      </button>
+      <button class="nav-item" onclick="nav('devguide')">
+        <span data-fr="🧑‍💻 Guide développeur" data-en="🧑‍💻 Dev guide">🧑‍💻 Guide développeur</span>
+      </button>
+      <button class="nav-item" onclick="nav('tests')">
+        <span data-fr="🧪 Tests" data-en="🧪 Tests">🧪 Tests</span>
+      </button>
+      <button class="nav-item" onclick="nav('contributing')">
+        <span data-fr="🤝 Contribuer" data-en="🤝 Contributing">🤝 Contribuer</span>
+      </button>
+    </div>
+
+  </nav>
+
+  <!-- ═══════ CONTENT ═══════ -->
+  <main class="content">
+
+    <!-- ════════════════════════════════════════
+     PAGE: HOME
+════════════════════════════════════════ -->
+    <div id="page-home" class="page active">
+      <div class="doc-section">
+
+        <div class="hero-band">
+          <h1><span class="accent">H.A.C.A</span></h1>
+          <p class="lead"
+            data-fr="Home Assistant Config Auditor — Auditez, détectez et corrigez automatiquement les problèmes de votre configuration Home Assistant."
+            data-en="Home Assistant Config Auditor — Audit, detect and automatically fix issues in your Home Assistant configuration.">
+            Home Assistant Config Auditor — Auditez, détectez et corrigez automatiquement les problèmes de votre
+            configuration Home Assistant.</p>
+          <div class="badge-row">
+            <span class="badge b-orange">v1.0.0</span>
+            <span class="badge b-blue">local_polling</span>
+            <span class="badge b-blue">HA 2024.1+</span>
+            <span class="badge b-green">MIT License</span>
+          </div>
+        </div>
+
+        <div class="fr-content">
+          <h2>Pourquoi H.A.C.A ?</h2>
+          <p>Au fil du temps, une installation Home Assistant accumule des automatisations obsolètes, des entités
+            fantômes, des références cassées et des problèmes de performance difficiles à repérer manuellement. H.A.C.A
+            fait ce travail à votre place — automatiquement, en continu, sans configuration complexe.</p>
+
+          <div class="feat-grid">
+            <div class="feat-card">
+              <div class="feat-icon">🔍</div>
+              <h3>Audit continu</h3>
+              <p>Scan auto toutes les 60 min. Score de santé en temps réel exposé comme capteur HA.</p>
+            </div>
+            <div class="feat-card">
+              <div class="feat-icon">⚡</div>
+              <h3>Corrections 1-clic</h3>
+              <p>Prévisualisation avant/après. Application directe. Backup automatique YAML.</p>
+            </div>
+            <div class="feat-card">
+              <div class="feat-icon">🤖</div>
+              <h3>IA intégrée</h3>
+              <p>Explications, suggestions, optimisation avec votre LLM HA existant.</p>
+            </div>
+            <div class="feat-card">
+              <div class="feat-icon">📊</div>
+              <h3>Historique</h3>
+              <p>Suivi du score dans le temps. Rapports PDF, Markdown et JSON.</p>
+            </div>
+            <div class="feat-card">
+              <div class="feat-icon">🔋</div>
+              <h3>Batteries</h3>
+              <p>Surveillance de tous les niveaux. Alertes configurables. Capteurs exposés.</p>
+            </div>
+            <div class="feat-card">
+              <div class="feat-icon">🗄️</div>
+              <h3>Recorder DB</h3>
+              <p>Détection et purge des entités orphelines dans la base de données.</p>
+            </div>
+          </div>
+
+          <h2>Score de santé</h2>
+          <div class="score-widget">
+            <div class="score-ring">
+              <div class="score-inner"><span class="score-num">85</span><span class="score-sub">%</span></div>
+            </div>
+            <div class="score-rows">
+              <div class="score-row">
+                <div class="scolor" style="background:#4ade80"></div><strong>90–100 —
+                  Excellent</strong><em>Configuration propre</em>
+              </div>
+              <div class="score-row">
+                <div class="scolor" style="background:#a3e635"></div><strong>75–89 — Bon</strong><em>Quelques
+                  optimisations possibles</em>
+              </div>
+              <div class="score-row">
+                <div class="scolor" style="background:#fb923c"></div><strong>50–74 — Attention</strong><em>Problèmes à
+                  traiter</em>
+              </div>
+              <div class="score-row">
+                <div class="scolor" style="background:#f87171"></div><strong>0–49 — Critique</strong><em>Intervention
+                  recommandée</em>
+              </div>
+            </div>
+          </div>
+
+          <div class="adm adm-tip">
+            <span class="adm-icon">💡</span>
+            <div class="adm-body">
+              <div class="adm-title">Intégration native HA</div>
+              Le score est exposé comme capteur <code>sensor.haca_health_score</code> — utilisez-le dans vos dashboards
+              Lovelace ou automatisations d'alerte.
+            </div>
+          </div>
+
+          <h2>Démarrage rapide</h2>
+          <p>Consultez le <button onclick="nav('install')"
+              style="background:none;border:none;cursor:pointer;color:var(--orange2);font-size:inherit;padding:0;text-decoration:underline;">guide
+              d'installation</button> pour être opérationnel en 5 minutes via HACS ou manuellement.</p>
+        </div>
+
+        <div class="en-content" style="display:none">
+          <h2>Why H.A.C.A?</h2>
+          <p>Over time, a Home Assistant setup accumulates stale automations, ghost entities, broken references and
+            hard-to-spot performance issues. H.A.C.A does this work for you — automatically, continuously, without
+            complex configuration.</p>
+
+          <div class="feat-grid">
+            <div class="feat-card">
+              <div class="feat-icon">🔍</div>
+              <h3>Continuous audit</h3>
+              <p>Auto scan every 60 min. Real-time health score exposed as an HA sensor.</p>
+            </div>
+            <div class="feat-card">
+              <div class="feat-icon">⚡</div>
+              <h3>1-click fixes</h3>
+              <p>Before/after preview. Direct application. Automatic YAML backup.</p>
+            </div>
+            <div class="feat-card">
+              <div class="feat-icon">🤖</div>
+              <h3>Built-in AI</h3>
+              <p>Explanations, suggestions, optimization using your existing HA LLM.</p>
+            </div>
+            <div class="feat-card">
+              <div class="feat-icon">📊</div>
+              <h3>History</h3>
+              <p>Score tracking over time. PDF, Markdown and JSON reports.</p>
+            </div>
+            <div class="feat-card">
+              <div class="feat-icon">🔋</div>
+              <h3>Batteries</h3>
+              <p>Monitor all battery levels. Configurable alerts. Exposed sensors.</p>
+            </div>
+            <div class="feat-card">
+              <div class="feat-icon">🗄️</div>
+              <h3>Recorder DB</h3>
+              <p>Detect and purge orphan entities from the database.</p>
+            </div>
+          </div>
+
+          <h2>Health Score</h2>
+          <div class="score-widget">
+            <div class="score-ring">
+              <div class="score-inner"><span class="score-num">85</span><span class="score-sub">%</span></div>
+            </div>
+            <div class="score-rows">
+              <div class="score-row">
+                <div class="scolor" style="background:#4ade80"></div><strong>90–100 — Excellent</strong><em>Clean
+                  configuration</em>
+              </div>
+              <div class="score-row">
+                <div class="scolor" style="background:#a3e635"></div><strong>75–89 — Good</strong><em>A few
+                  optimizations possible</em>
+              </div>
+              <div class="score-row">
+                <div class="scolor" style="background:#fb923c"></div><strong>50–74 — Warning</strong><em>Issues to
+                  address</em>
+              </div>
+              <div class="score-row">
+                <div class="scolor" style="background:#f87171"></div><strong>0–49 — Critical</strong><em>Action
+                  recommended</em>
+              </div>
+            </div>
+          </div>
+          <div class="adm adm-tip">
+            <span class="adm-icon">💡</span>
+            <div class="adm-body">
+              <div class="adm-title">Native HA integration</div>Score exposed as <code>sensor.haca_health_score</code> —
+              use it in Lovelace dashboards or alert automations.
+            </div>
+          </div>
+          <h2>Quick start</h2>
+          <p>See the <button onclick="nav('install')"
+              style="background:none;border:none;cursor:pointer;color:var(--orange2);font-size:inherit;padding:0;text-decoration:underline;">installation
+              guide</button> to be up and running in 5 minutes via HACS or manually.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════════════
+     PAGE: INSTALLATION
+════════════════════════════════════════ -->
+    <div id="page-install" class="page">
+      <div class="doc-section">
+
+        <div class="fr-content">
+          <span class="page-tag">Installation</span>
+          <h1>Installation</h1>
+          <p class="lead">H.A.C.A s'installe en quelques minutes via HACS (recommandé) ou manuellement.</p>
+
+          <h2 id="req">Prérequis</h2>
+          <div class="adm adm-warning">
+            <span class="adm-icon">⚠️</span>
+            <div class="adm-body">
+              <div class="adm-title">Versions supportées</div>Home Assistant 2024.1 minimum · Python 3.12+ (inclus avec
+              HA) · Accès au dossier <code>/config/</code>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Composant</th>
+                  <th>Version minimale</th>
+                  <th>Notes</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Home Assistant Core</td>
+                  <td>2024.1.0</td>
+                  <td>Requis</td>
+                </tr>
+                <tr>
+                  <td>HACS</td>
+                  <td>1.34.0</td>
+                  <td>Optionnel (méthode recommandée)</td>
+                </tr>
+                <tr>
+                  <td>PyYAML</td>
+                  <td>6.0</td>
+                  <td>Installé automatiquement</td>
+                </tr>
+                <tr>
+                  <td>fpdf2</td>
+                  <td>2.7.4</td>
+                  <td>Installé automatiquement</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h2 id="hacs">Installation via HACS</h2>
+          <div class="adm adm-tip"><span class="adm-icon">✅</span>
+            <div class="adm-body">
+              <div class="adm-title">Méthode recommandée</div>HACS gère les mises à jour automatiquement et simplifie
+              l'installation.
+            </div>
+          </div>
+
+          <div class="steps">
+            <div class="step">
+              <div class="step-n">1</div>
+              <div class="step-body">
+                <h3>Installer HACS</h3>
+                <p>Si HACS n'est pas installé, rendez-vous sur <a href="https://hacs.xyz" target="_blank">hacs.xyz</a>
+                  et suivez le guide officiel.</p>
+                <div class="code-wrap">
+                  <div class="code-header">
+                    <div class="code-dots">
+                      <div class="code-dot"></div>
+                      <div class="code-dot"></div>
+                      <div class="code-dot"></div>
+                    </div><span class="code-lang">bash</span>
+                  </div>
+                  <pre><span class="c-cm"># Installation rapide</span>
+wget -O - https://get.hacs.xyz | bash -</pre>
+                </div>
+                <p>Redémarrez HA après installation : <strong>Paramètres → Système → Redémarrer</strong></p>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-n">2</div>
+              <div class="step-body">
+                <h3>Ajouter le dépôt personnalisé</h3>
+                <p>Dans HACS, cliquez <strong>Intégrations → ⋮ → Dépôts personnalisés</strong></p>
+                <ul>
+                  <li><strong>URL :</strong> <code>https://github.com/JeanMarc-Labs/ha-config-auditor</code></li>
+                  <li><strong>Catégorie :</strong> Intégration</li>
+                </ul>
+                <p>Cliquez <strong>Ajouter</strong>.</p>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-n">3</div>
+              <div class="step-body">
+                <h3>Installer H.A.C.A</h3>
+                <p>Recherchez <strong>H.A.C.A</strong> dans la liste, cliquez sur la carte, puis
+                  <strong>Télécharger</strong>. Choisissez la dernière version.
+                </p>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-n">4</div>
+              <div class="step-body">
+                <h3>Redémarrer Home Assistant</h3>
+                <p><strong>Paramètres → Système → Redémarrer → Redémarrer Home Assistant</strong></p>
+                <div class="adm adm-warning" style="margin-top:.5rem"><span class="adm-icon">⚠️</span>
+                  <div class="adm-body">Un redémarrage complet est obligatoire (pas seulement "Recharger").</div>
+                </div>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-n">5</div>
+              <div class="step-body">
+                <h3>Ajouter l'intégration</h3>
+                <p><strong>Paramètres → Appareils &amp; Services → + Ajouter une intégration</strong></p>
+                <p>Recherchez <strong>H.A.C.A</strong> ou <strong>Config Auditor</strong>, sélectionnez-le et suivez le
+                  wizard de première installation (intervalle de scan uniquement).</p>
+                <p>✅ Le panneau H.A.C.A apparaît dans votre sidebar. <strong>Toute la configuration se fait depuis ce
+                    panel, onglet ⚙️ Configuration.</strong></p>
+              </div>
+            </div>
+          </div>
+
+          <h2 id="manual">Installation manuelle</h2>
+          <div class="adm adm-note"><span class="adm-icon">ℹ️</span>
+            <div class="adm-body">
+              <div class="adm-title">Pour utilisateurs avancés</div>Utile si vous n'utilisez pas HACS ou préférez gérer
+              les mises à jour manuellement.
+            </div>
+          </div>
+
+          <div class="code-wrap">
+            <div class="code-header">
+              <div class="code-dots">
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+              </div><span class="code-lang">bash</span>
+            </div>
+            <pre><span class="c-cm"># Télécharger le projet</span>
+git clone https://github.com/JeanMarc-Labs/ha-config-auditor.git
+cd ha-config-auditor
+
+<span class="c-cm"># Créer le dossier si nécessaire</span>
+mkdir -p /config/custom_components/
+
+<span class="c-cm"># Copier le composant</span>
+cp -r custom_components/config_auditor /config/custom_components/
+
+<span class="c-cm"># Vérifier</span>
+ls /config/custom_components/config_auditor/</pre>
+          </div>
+
+          <p>Vous devez voir :</p>
+          <div class="code-wrap">
+            <div class="code-header">
+              <div class="code-dots">
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+              </div><span class="code-lang">fichiers</span>
+            </div>
+            <pre>config_auditor/
+├── __init__.py          manifest.json
+├── automation_analyzer.py    entity_analyzer.py
+├── refactoring_assistant.py  conversation.py
+├── battery_monitor.py        recorder_analyzer.py
+├── websocket.py              services.yaml
+├── translations/             www/
+│                             └── haca-panel.js</pre>
+          </div>
+
+          <p>Redémarrez HA puis ajoutez l'intégration comme à l'étape 5 ci-dessus.</p>
+
+          <h2 id="trouble">Dépannage</h2>
+          <div class="adm adm-note"><span class="adm-icon">🔍</span>
+            <div class="adm-body">
+              <div class="adm-title">Consulter les logs</div>
+              <strong>Paramètres → Système → Logs</strong> → filtrer par <code>config_auditor</code>
+            </div>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Problème</th>
+                  <th>Solution</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Intégration absente après installation</td>
+                  <td>Vérifiez que <code>custom_components/config_auditor/manifest.json</code> existe. Redémarrez HA
+                    (pas reload).</td>
+                </tr>
+                <tr>
+                  <td>Panel absent de la sidebar</td>
+                  <td>Videz le cache navigateur (Ctrl+Shift+R). Vérifiez <strong>Profil → Menu latéral</strong>.</td>
+                </tr>
+                <tr>
+                  <td><code>No module named fpdf2</code></td>
+                  <td>Les dépendances s'installent automatiquement. Attendez le 1er démarrage complet.</td>
+                </tr>
+                <tr>
+                  <td>Scans ne se lancent pas</td>
+                  <td>Testez via <strong>Outils de développement → Services</strong> :
+                    <code>config_auditor.scan_all</code>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div><!-- /fr-content -->
+
+        <div class="en-content" style="display:none">
+          <span class="page-tag">Installation</span>
+          <h1>Installation</h1>
+          <p class="lead">H.A.C.A installs in minutes via HACS (recommended) or manually.</p>
+
+          <h2 id="req">Requirements</h2>
+          <div class="adm adm-warning"><span class="adm-icon">⚠️</span>
+            <div class="adm-body">
+              <div class="adm-title">Supported versions</div>Home Assistant 2024.1 minimum · Python 3.12+ (bundled with
+              HA) · Access to <code>/config/</code>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Component</th>
+                  <th>Min version</th>
+                  <th>Notes</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Home Assistant Core</td>
+                  <td>2024.1.0</td>
+                  <td>Required</td>
+                </tr>
+                <tr>
+                  <td>HACS</td>
+                  <td>1.34.0</td>
+                  <td>Optional (recommended)</td>
+                </tr>
+                <tr>
+                  <td>PyYAML</td>
+                  <td>6.0</td>
+                  <td>Auto-installed</td>
+                </tr>
+                <tr>
+                  <td>fpdf2</td>
+                  <td>2.7.4</td>
+                  <td>Auto-installed</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h2 id="hacs">HACS Installation</h2>
+          <div class="adm adm-tip"><span class="adm-icon">✅</span>
+            <div class="adm-body">
+              <div class="adm-title">Recommended method</div>HACS handles updates automatically and simplifies
+              installation.
+            </div>
+          </div>
+          <div class="steps">
+            <div class="step">
+              <div class="step-n">1</div>
+              <div class="step-body">
+                <h3>Install HACS</h3>
+                <p>If HACS isn't installed, visit <a href="https://hacs.xyz" target="_blank">hacs.xyz</a> and follow the
+                  official guide. Restart HA afterwards.</p>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-n">2</div>
+              <div class="step-body">
+                <h3>Add custom repository</h3>
+                <p>In HACS, click <strong>Integrations → ⋮ → Custom repositories</strong></p>
+                <ul>
+                  <li><strong>URL:</strong> <code>https://github.com/JeanMarc-Labs/ha-config-auditor</code></li>
+                  <li><strong>Category:</strong> Integration</li>
+                </ul>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-n">3</div>
+              <div class="step-body">
+                <h3>Install H.A.C.A</h3>
+                <p>Find <strong>H.A.C.A</strong> in the list, click the card, then <strong>Download</strong>.</p>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-n">4</div>
+              <div class="step-body">
+                <h3>Restart Home Assistant</h3>
+                <p><strong>Settings → System → Restart → Restart Home Assistant</strong></p>
+                <div class="adm adm-warning" style="margin-top:.5rem"><span class="adm-icon">⚠️</span>
+                  <div class="adm-body">A full restart is required (not just reload).</div>
+                </div>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-n">5</div>
+              <div class="step-body">
+                <h3>Add the integration</h3>
+                <p><strong>Settings → Devices &amp; Services → + Add Integration</strong></p>
+                <p>Search <strong>H.A.C.A</strong> or <strong>Config Auditor</strong>, select it and complete the
+                  first-time wizard (scan interval only). ✅ The H.A.C.A panel appears in your sidebar. <strong>All
+                    configuration is done from the panel → ⚙️ Configuration tab.</strong></p>
+              </div>
+            </div>
+          </div>
+
+          <h2 id="manual">Manual Installation</h2>
+          <div class="code-wrap">
+            <div class="code-header">
+              <div class="code-dots">
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+              </div><span class="code-lang">bash</span>
+            </div>
+            <pre>git clone https://github.com/JeanMarc-Labs/ha-config-auditor.git
+mkdir -p /config/custom_components/
+cp -r ha-config-auditor/custom_components/config_auditor /config/custom_components/</pre>
+          </div>
+          <p>Restart HA, then add the integration via <strong>Settings → Devices &amp; Services → + Add
+              Integration</strong>. Once installed, all configuration is done from the <strong>H.A.C.A panel → ⚙️
+              Configuration tab</strong>.</p>
+
+          <h2 id="trouble">Troubleshooting</h2>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Issue</th>
+                  <th>Solution</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Integration not found after install</td>
+                  <td>Check <code>manifest.json</code> exists. Do a full HA restart (not reload).</td>
+                </tr>
+                <tr>
+                  <td>Panel missing from sidebar</td>
+                  <td>Clear browser cache (Ctrl+Shift+R). Check <strong>Profile → Sidebar</strong>.</td>
+                </tr>
+                <tr>
+                  <td><code>No module named fpdf2</code></td>
+                  <td>Dependencies auto-install on first full start. Wait and retry.</td>
+                </tr>
+                <tr>
+                  <td>Scans not running</td>
+                  <td>Test via <strong>Dev Tools → Services</strong>: <code>config_auditor.scan_all</code></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div><!-- /en-content -->
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════════════
+     PAGE: DASHBOARD
+════════════════════════════════════════ -->
+    <div id="page-dashboard" class="page">
+      <div class="doc-section">
+        <div class="fr-content">
+          <span class="page-tag">Utilisation</span>
+          <h1>Tableau de bord</h1>
+          <p class="lead">La première page que vous voyez en ouvrant H.A.C.A. Vue d'ensemble instantanée de la santé de
+            votre installation.</p>
+
+          <h2>Score de santé</h2>
+          <p>Le score (0–100) est affiché en grand en haut du tableau de bord. Il se met à jour après chaque scan. Le
+            calcul :</p>
+          <div class="code-wrap">
+            <div class="code-header">
+              <div class="code-dots">
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+              </div><span class="code-lang">formule</span>
+            </div>
+            <pre>Score = 100 − Σ pénalités
+
+Pénalités par issue :
+  HIGH   → −5 points
+  MEDIUM → −2 points
+  LOW    → −1 point</pre>
+          </div>
+
+          <h2>Statistiques rapides</h2>
+          <p>Six compteurs sous le score permettent d'accéder directement à chaque catégorie :</p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Compteur</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Issues totales</strong></td>
+                  <td>Toutes catégories confondues</td>
+                </tr>
+                <tr>
+                  <td><strong>Automatisations</strong></td>
+                  <td>Issues automations / scripts / scènes</td>
+                </tr>
+                <tr>
+                  <td><strong>Entités</strong></td>
+                  <td>Entités problématiques détectées</td>
+                </tr>
+                <tr>
+                  <td><strong>Performance</strong></td>
+                  <td>Problèmes de performance</td>
+                </tr>
+                <tr>
+                  <td><strong>Sécurité</strong></td>
+                  <td>Vulnérabilités potentielles</td>
+                </tr>
+                <tr>
+                  <td><strong>Batteries</strong></td>
+                  <td>Appareils sous le seuil d'alerte</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h2>Graphique d'évolution</h2>
+          <p>Un graphique sparkline montre l'évolution du score sur les 30 derniers scans. Survolez les points pour voir
+            le détail. Une hausse stable = vos corrections portent leurs fruits. Une baisse soudaine = nouvelles
+            automations avec problèmes.</p>
+
+          <h2>Forcer un scan</h2>
+          <p>Cliquez sur <strong>Scanner tout</strong> dans la barre supérieure pour déclencher un scan immédiat. Pour
+            un résultat plus rapide, lancez un scan sélectif via les Outils de développement :</p>
+          <div class="code-wrap">
+            <div class="code-header">
+              <div class="code-dots">
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+              </div><span class="code-lang">yaml</span>
+            </div>
+            <pre><span class="c-cm"># Scan complet</span>
+<span class="c-key">service</span>: <span class="c-str">config_auditor.scan_all</span>
+
+<span class="c-cm"># Scan uniquement les automatisations (plus rapide)</span>
+<span class="c-key">service</span>: <span class="c-str">config_auditor.scan_automations</span></pre>
+          </div>
+
+          <h2>Intégration dans HA</h2>
+          <p>Utilisez le score dans vos dashboards Lovelace et automatisations :</p>
+          <div class="code-wrap">
+            <div class="code-header">
+              <div class="code-dots">
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+              </div><span class="code-lang">yaml · Automatisation d'alerte</span>
+            </div>
+            <pre><span class="c-key">automation</span>:
+  - <span class="c-key">alias</span>: <span class="c-str">"HACA : Alerte score santé"</span>
+    <span class="c-key">trigger</span>:
+      - <span class="c-key">platform</span>: <span class="c-str">numeric_state</span>
+        <span class="c-key">entity_id</span>: <span class="c-str">sensor.haca_health_score</span>
+        <span class="c-key">below</span>: <span class="c-num">70</span>
+    <span class="c-key">action</span>:
+      - <span class="c-key">service</span>: <span class="c-str">notify.mobile_app</span>
+        <span class="c-key">data</span>:
+          <span class="c-key">title</span>: <span class="c-str">"⚠️ Score HA bas"</span>
+          <span class="c-key">message</span>: <span class="c-str">"Score : {{ states('sensor.haca_health_score') }}/100"</span></pre>
+          </div>
+        </div>
+
+        <div class="en-content" style="display:none">
+          <span class="page-tag">Usage</span>
+          <h1>Dashboard</h1>
+          <p class="lead">The first screen when opening H.A.C.A. Instant overview of your installation's health.</p>
+          <h2>Health Score</h2>
+          <p>Score (0–100) displayed at the top, updated after every scan.</p>
+          <div class="code-wrap">
+            <div class="code-header">
+              <div class="code-dots">
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+              </div><span class="code-lang">formula</span>
+            </div>
+            <pre>Score = 100 − Σ penalties
+
+Penalties per issue:
+  HIGH   → −5 points
+  MEDIUM → −2 points
+  LOW    → −1 point</pre>
+          </div>
+          <h2>Quick Stats</h2>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Counter</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Total issues</strong></td>
+                  <td>All categories combined</td>
+                </tr>
+                <tr>
+                  <td><strong>Automations</strong></td>
+                  <td>Automation / script / scene issues</td>
+                </tr>
+                <tr>
+                  <td><strong>Entities</strong></td>
+                  <td>Problematic entities detected</td>
+                </tr>
+                <tr>
+                  <td><strong>Performance</strong></td>
+                  <td>Performance issues</td>
+                </tr>
+                <tr>
+                  <td><strong>Security</strong></td>
+                  <td>Potential vulnerabilities</td>
+                </tr>
+                <tr>
+                  <td><strong>Batteries</strong></td>
+                  <td>Devices below alert threshold</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <h2>Trigger a scan</h2>
+          <div class="code-wrap">
+            <div class="code-header">
+              <div class="code-dots">
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+              </div><span class="code-lang">yaml</span>
+            </div>
+            <pre><span class="c-key">service</span>: <span class="c-str">config_auditor.scan_all</span></pre>
+          </div>
+          <h2>HA Integration</h2>
+          <div class="code-wrap">
+            <div class="code-header">
+              <div class="code-dots">
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+              </div><span class="code-lang">yaml</span>
+            </div>
+            <pre><span class="c-key">automation</span>:
+  - <span class="c-key">alias</span>: <span class="c-str">"HACA: Health score alert"</span>
+    <span class="c-key">trigger</span>:
+      - <span class="c-key">platform</span>: <span class="c-str">numeric_state</span>
+        <span class="c-key">entity_id</span>: <span class="c-str">sensor.haca_health_score</span>
+        <span class="c-key">below</span>: <span class="c-num">70</span>
+    <span class="c-key">action</span>:
+      - <span class="c-key">service</span>: <span class="c-str">notify.mobile_app</span>
+        <span class="c-key">data</span>:
+          <span class="c-key">message</span>: <span class="c-str">"Score: {{ states('sensor.haca_health_score') }}/100"</span></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════════════
+     PAGE: ISSUES
+════════════════════════════════════════ -->
+    <div id="page-issues" class="page">
+      <div class="doc-section">
+        <div class="fr-content">
+          <span class="page-tag">Utilisation</span>
+          <h1>Analyse des Issues</h1>
+          <p class="lead">Comprendre, filtrer et agir sur les problèmes détectés par H.A.C.A.</p>
+
+          <h2>Anatomie d'une carte d'issue</h2>
+          <div class="code-wrap">
+            <div class="code-header">
+              <div class="code-dots">
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+              </div><span class="code-lang">interface</span>
+            </div>
+            <pre>┌─────────────────────────────────────────────────────┐
+│ ⚠️ HIGH   Mode incorrect pour détection de mouvement │
+│                                                      │
+│ 📍 automation.lumieres_salon                         │
+│ 📁 action[0].mode                                    │
+│                                                      │
+│ L'automatisation utilise le mode 'single' mais       │
+│ contrôle une lampe via un capteur de mouvement.      │
+│ Si le capteur se déclenche pendant l'exécution,      │
+│ l'action est ignorée.                                │
+│                                                      │
+│ [ ✏️ Ouvrir dans HA ] [ 🤖 Expliquer IA ] [ 🔧 Fix ] │
+└─────────────────────────────────────────────────────┘</pre>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Élément</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span class="sev sev-h">HIGH</span></td>
+                  <td>Badge de sévérité — priorité de traitement</td>
+                </tr>
+                <tr>
+                  <td><strong>Titre</strong></td>
+                  <td>Description courte et claire du problème</td>
+                </tr>
+                <tr>
+                  <td><strong>Entité</strong></td>
+                  <td>L'automatisation, script ou entité concernée</td>
+                </tr>
+                <tr>
+                  <td><strong>Localisation</strong></td>
+                  <td>Où exactement dans le YAML (trigger, action…)</td>
+                </tr>
+                <tr>
+                  <td><strong>Message</strong></td>
+                  <td>Explication détaillée du problème et ses conséquences</td>
+                </tr>
+                <tr>
+                  <td><strong>Boutons</strong></td>
+                  <td>Ouvrir dans HA · Explication IA · Correction automatique</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h2>Filtrer les issues</h2>
+          <p>L'interface propose plusieurs niveaux de filtrage :</p>
+          <ul>
+            <li><strong>Onglets thématiques</strong> — Automatisations, Scripts, Scènes, Entités, Performance, Sécurité,
+              Blueprints</li>
+            <li><strong>Chips de sévérité</strong> — <span class="sev sev-h">HIGH</span> <span
+                class="sev sev-m">MEDIUM</span> <span class="sev sev-l">LOW</span></li>
+            <li><strong>Export CSV</strong> — Exporter la liste filtrée courante</li>
+          </ul>
+
+          <h2 id="types">Principaux types d'issues</h2>
+
+          <h3>device_id_in_trigger / device_id_in_action / device_id_in_target</h3>
+          <div class="adm adm-danger"><span class="adm-icon">🔴</span>
+            <div class="adm-body">
+              <div class="adm-title">Problème — Sévérité HIGH</div>
+              Un déclencheur, action ou target utilise <code>device_id</code> au lieu d'une entité. Si le device est
+              supprimé et réajouté (remplacement matériel), son ID change et l'automatisation casse silencieusement,
+              sans aucune erreur visible.
+            </div>
+          </div>
+          <div class="code-wrap">
+            <div class="code-header">
+              <div class="code-dots">
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+              </div><span class="code-lang">yaml · diff</span>
+            </div>
+            <pre><span class="c-cm"># ❌ Avant (fragile)</span>
+<span class="c-del">- platform: device
+  device_id: abc123def456
+  domain: binary_sensor
+  type: motion</span>
+
+<span class="c-cm"># ✅ Après (robuste — corrigé par H.A.C.A)</span>
+<span class="c-add">- platform: state
+  entity_id: binary_sensor.capteur_mouvement_salon
+  to: "on"</span></pre>
+          </div>
+
+          <h3>incorrect_mode_motion_single</h3>
+          <div class="adm adm-danger"><span class="adm-icon">🔴</span>
+            <div class="adm-body">
+              <div class="adm-title">Problème — Sévérité HIGH</div>
+              Mode <code>single</code> sur une automatisation mouvement/lumière. En mode single, si le capteur se
+              déclenche pendant l'exécution (extinction programmée), l'action est ignorée — la lumière reste allumée
+              indéfiniment.
+            </div>
+          </div>
+          <div class="code-wrap">
+            <div class="code-header">
+              <div class="code-dots">
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+              </div><span class="code-lang">yaml · diff</span>
+            </div>
+            <pre><span class="c-del">mode: single</span>
+<span class="c-add">mode: restart   # ✅ Redémarre si nouveau mouvement détecté</span></pre>
+          </div>
+
+          <h3>template_simple_state</h3>
+          <div class="adm adm-warning"><span class="adm-icon">🟡</span>
+            <div class="adm-body">
+              <div class="adm-title">Problème — Sévérité MEDIUM</div>
+              Un template complexe fait une vérification d'état simple qui pourrait être exprimée nativement. Les
+              templates recalculent à chaque changement d'état dans HA, même quand ce n'est pas nécessaire.
+            </div>
+          </div>
+          <div class="code-wrap">
+            <div class="code-header">
+              <div class="code-dots">
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+              </div><span class="code-lang">yaml · diff</span>
+            </div>
+            <pre><span class="c-cm"># ❌ Avant (template inutilement complexe)</span>
+<span class="c-del">condition:
+  - condition: template
+    value_template: "{{ states('light.salon') == 'on' }}"</span>
+
+<span class="c-cm"># ✅ Après (condition native)</span>
+<span class="c-add">condition:
+  - condition: state
+    entity_id: light.salon
+    state: "on"</span></pre>
+          </div>
+
+          <h3>no_alias / no_description</h3>
+          <div class="adm adm-note"><span class="adm-icon">🔵</span>
+            <div class="adm-body">
+              <div class="adm-title">Problème — Sévérité LOW</div>
+              Automatisation ou script sans nom lisible ou description. Rend la maintenance difficile — dans 6 mois,
+              vous ne saurez plus ce que fait cette automatisation.
+            </div>
+          </div>
+          <p>H.A.C.A utilise l'IA pour suggérer un nom/description basé sur le contenu YAML. Le texte est modifiable
+            avant application.</p>
+
+          <h3>expensive_template_states_all</h3>
+          <div class="adm adm-danger"><span class="adm-icon">🔴</span>
+            <div class="adm-body">
+              <div class="adm-title">Problème — Sévérité HIGH</div>
+              Utilisation de <code>states</code> (sans entité ciblée) dans un template. Cette expression parcourt TOUTES
+              les entités HA à chaque évaluation. Sur une installation avec 500+ entités, cela crée une charge CPU
+              significative.
+            </div>
+          </div>
+        </div>
+
+        <div class="en-content" style="display:none">
+          <span class="page-tag">Usage</span>
+          <h1>Issues Analysis</h1>
+          <p class="lead">Understanding, filtering and acting on problems detected by H.A.C.A.</p>
+          <h2>Issue card anatomy</h2>
+          <div class="code-wrap">
+            <div class="code-header">
+              <div class="code-dots">
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+              </div><span class="code-lang">interface</span>
+            </div>
+            <pre>┌──────────────────────────────────────────────────────┐
+│ ⚠️ HIGH   Incorrect mode for motion detection         │
+│                                                       │
+│ 📍 automation.living_room_lights                      │
+│ 📁 mode                                               │
+│                                                       │
+│ The automation uses 'single' mode but controls a      │
+│ light via a motion sensor. If the sensor triggers     │
+│ during execution, the action is ignored.              │
+│                                                       │
+│ [ ✏️ Open in HA ] [ 🤖 AI Explain ] [ 🔧 Fix ]        │
+└──────────────────────────────────────────────────────┘</pre>
+          </div>
+          <h2>Filter issues</h2>
+          <ul>
+            <li><strong>Thematic tabs</strong> — Automations, Scripts, Scenes, Entities, Performance, Security,
+              Blueprints</li>
+            <li><strong>Severity chips</strong> — <span class="sev sev-h">HIGH</span> <span
+                class="sev sev-m">MEDIUM</span> <span class="sev sev-l">LOW</span></li>
+            <li><strong>CSV export</strong> — Export the current filtered list</li>
+          </ul>
+          <h2 id="types">Main issue types</h2>
+          <h3>device_id_in_trigger / device_id_in_action / device_id_in_target</h3>
+          <div class="adm adm-danger"><span class="adm-icon">🔴</span>
+            <div class="adm-body">
+              <div class="adm-title">HIGH — Breaks silently on device replacement</div>Using device_id instead of
+              entity_id. When a device is removed and re-added (hardware replacement), its ID changes and the automation
+              silently stops working.
+            </div>
+          </div>
+          <div class="code-wrap">
+            <div class="code-header">
+              <div class="code-dots">
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+              </div><span class="code-lang">yaml · diff</span>
+            </div>
+            <pre><span class="c-del">- platform: device
+  device_id: abc123def456
+  domain: binary_sensor
+  type: motion</span>
+<span class="c-add">- platform: state
+  entity_id: binary_sensor.motion_sensor
+  to: "on"</span></pre>
+          </div>
+          <h3>incorrect_mode_motion_single</h3>
+          <div class="adm adm-danger"><span class="adm-icon">🔴</span>
+            <div class="adm-body">
+              <div class="adm-title">HIGH — Light may stay on indefinitely</div><code>single</code> mode on a
+              motion/light automation means re-triggers during execution are ignored. The light can stay on forever.
+            </div>
+          </div>
+          <div class="code-wrap">
+            <div class="code-header">
+              <div class="code-dots">
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+              </div><span class="code-lang">yaml · diff</span>
+            </div>
+            <pre><span class="c-del">mode: single</span>
+<span class="c-add">mode: restart</span></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════════════
+     PAGE: FIXES
+════════════════════════════════════════ -->
+    <div id="page-fixes" class="page">
+      <div class="doc-section">
+        <div class="fr-content">
+          <span class="page-tag">Utilisation</span>
+          <h1>Corrections automatiques</h1>
+          <p class="lead">H.A.C.A corrige certaines issues directement depuis l'interface, avec prévisualisation et
+            backup automatique.</p>
+
+          <div class="adm adm-warning"><span class="adm-icon">💾</span>
+            <div class="adm-body">
+              <div class="adm-title">Backup automatique garanti</div>Avant toute correction, H.A.C.A crée
+              automatiquement une sauvegarde du fichier YAML modifié dans <code>.haca_backups/</code>. Restaurable en 1
+              clic depuis l'onglet Sauvegardes.
+            </div>
+          </div>
+
+          <h2>Issues corrigeables</h2>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Type d'issue</th>
+                  <th>Méthode</th>
+                  <th>Fix</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>device_id_in_trigger</code></td>
+                  <td>Conversion → <code>platform: state</code></td>
+                  <td><span class="fix fix-a">Auto</span></td>
+                </tr>
+                <tr>
+                  <td><code>device_id_in_action</code></td>
+                  <td>Conversion → <code>service</code> + <code>target.entity_id</code></td>
+                  <td><span class="fix fix-a">Auto</span></td>
+                </tr>
+                <tr>
+                  <td><code>device_id_in_target</code></td>
+                  <td>Remplacement <code>target.device_id</code> → <code>target.entity_id</code></td>
+                  <td><span class="fix fix-a">Auto</span></td>
+                </tr>
+                <tr>
+                  <td><code>device_trigger_platform</code></td>
+                  <td>Conversion déclencheur device → state</td>
+                  <td><span class="fix fix-a">Auto</span></td>
+                </tr>
+                <tr>
+                  <td><code>device_id_in_condition</code></td>
+                  <td>Conversion → condition <code>state</code></td>
+                  <td><span class="fix fix-a">Auto</span></td>
+                </tr>
+                <tr>
+                  <td><code>incorrect_mode_motion_single</code></td>
+                  <td>Mode <code>single</code> → <code>restart</code></td>
+                  <td><span class="fix fix-a">Auto</span></td>
+                </tr>
+                <tr>
+                  <td><code>template_simple_state</code></td>
+                  <td>Template → condition native</td>
+                  <td><span class="fix fix-a">Auto</span></td>
+                </tr>
+                <tr>
+                  <td><code>no_alias</code> / <code>no_description</code></td>
+                  <td>Suggestion IA + application</td>
+                  <td><span class="fix fix-i">IA</span></td>
+                </tr>
+                <tr>
+                  <td><code>high_complexity_actions</code></td>
+                  <td>Optimisation IA complète</td>
+                  <td><span class="fix fix-i">IA</span></td>
+                </tr>
+                <tr>
+                  <td><code>broken_device_reference</code></td>
+                  <td>Nettoyage de la référence</td>
+                  <td><span class="fix fix-a">Auto</span></td>
+                </tr>
+                <tr>
+                  <td><code>zombie_entity</code></td>
+                  <td>Suppression de l'entrée registre</td>
+                  <td><span class="fix fix-a">Auto</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h2>Flux de correction — étape par étape</h2>
+          <div class="steps">
+            <div class="step">
+              <div class="step-n">1</div>
+              <div class="step-body">
+                <h3>Cliquez sur 🔧 Corriger</h3>
+                <p>Le bouton apparaît sur les issues corrigeables automatiquement. Un chargement démarre pendant
+                  l'analyse.</p>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-n">2</div>
+              <div class="step-body">
+                <h3>Prévisualisation diff</h3>
+                <p>Un modal s'ouvre avec le YAML <strong>avant</strong> (rouge) et <strong>après</strong> (vert) la
+                  correction. Vérifiez que la proposition vous convient.</p>
+                <div class="code-wrap">
+                  <div class="code-header">
+                    <div class="code-dots">
+                      <div class="code-dot"></div>
+                      <div class="code-dot"></div>
+                      <div class="code-dot"></div>
+                    </div><span class="code-lang">diff YAML</span>
+                  </div>
+                  <pre>  <span class="c-key">trigger</span>:
+<span class="c-del">    - platform: device
+      device_id: abc123def456
+      domain: binary_sensor</span>
+<span class="c-add">    - platform: state
+      entity_id: binary_sensor.mouvement_salon
+      to: "on"</span></pre>
+                </div>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-n">3</div>
+              <div class="step-body">
+                <h3>Appliquer</h3>
+                <p>Cliquez <strong>Appliquer la correction</strong>. H.A.C.A crée d'abord le backup, puis écrit le YAML
+                  corrigé.</p>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-n">4</div>
+              <div class="step-body">
+                <h3>Recharger HA</h3>
+                <p>HA recharge automatiquement les automatisations. Aucun redémarrage nécessaire pour les automations
+                  YAML.</p>
+              </div>
+            </div>
+          </div>
+
+          <h2>Gérer les sauvegardes</h2>
+          <p>Dans l'onglet <strong>Sauvegardes</strong> de H.A.C.A :</p>
+          <ul>
+            <li><strong>Voir</strong> — Affiche le contenu du fichier sauvegardé</li>
+            <li><strong>Restaurer</strong> — Réapplique le fichier sauvegardé (avec confirmation)</li>
+            <li><strong>Supprimer</strong> — Supprime la sauvegarde</li>
+          </ul>
+
+          <h2>Mode simulation (dry run)</h2>
+          <p>Pour tester une correction sans modifier les fichiers :</p>
+          <div class="code-wrap">
+            <div class="code-header">
+              <div class="code-dots">
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+              </div><span class="code-lang">yaml</span>
+            </div>
+            <pre><span class="c-key">service</span>: <span class="c-str">config_auditor.fix_device_id</span>
+<span class="c-key">data</span>:
+  <span class="c-key">automation_id</span>: <span class="c-str">"1234567890abc"</span>
+  <span class="c-key">dry_run</span>: <span class="c-kw">true</span>   <span class="c-cm"># Aucun fichier modifié</span></pre>
+          </div>
+        </div>
+
+        <div class="en-content" style="display:none">
+          <span class="page-tag">Usage</span>
+          <h1>Automatic Fixes</h1>
+          <p class="lead">H.A.C.A fixes certain issues directly from the interface, with preview and automatic backup.
+          </p>
+          <div class="adm adm-warning"><span class="adm-icon">💾</span>
+            <div class="adm-body">
+              <div class="adm-title">Automatic backup guaranteed</div>Before any fix, H.A.C.A automatically backs up the
+              YAML file to <code>.haca_backups/</code>. Restorable in 1 click from the Backups tab.
+            </div>
+          </div>
+          <h2>Fixable issues</h2>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Issue type</th>
+                  <th>Method</th>
+                  <th>Fix</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>device_id_in_trigger</code></td>
+                  <td>Convert to <code>platform: state</code></td>
+                  <td><span class="fix fix-a">Auto</span></td>
+                </tr>
+                <tr>
+                  <td><code>device_id_in_action</code></td>
+                  <td>Convert to <code>service</code> + <code>target.entity_id</code></td>
+                  <td><span class="fix fix-a">Auto</span></td>
+                </tr>
+                <tr>
+                  <td><code>device_id_in_target</code></td>
+                  <td>Replace <code>target.device_id</code> with <code>target.entity_id</code></td>
+                  <td><span class="fix fix-a">Auto</span></td>
+                </tr>
+                <tr>
+                  <td><code>incorrect_mode_motion_single</code></td>
+                  <td><code>single</code> → <code>restart</code></td>
+                  <td><span class="fix fix-a">Auto</span></td>
+                </tr>
+                <tr>
+                  <td><code>template_simple_state</code></td>
+                  <td>Template → native condition</td>
+                  <td><span class="fix fix-a">Auto</span></td>
+                </tr>
+                <tr>
+                  <td><code>no_alias</code> / <code>no_description</code></td>
+                  <td>AI suggestion + apply</td>
+                  <td><span class="fix fix-i">AI</span></td>
+                </tr>
+                <tr>
+                  <td><code>broken_device_reference</code></td>
+                  <td>Clean broken reference</td>
+                  <td><span class="fix fix-a">Auto</span></td>
+                </tr>
+                <tr>
+                  <td><code>zombie_entity</code></td>
+                  <td>Remove registry entry</td>
+                  <td><span class="fix fix-a">Auto</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <h2>Fix workflow</h2>
+          <div class="steps">
+            <div class="step">
+              <div class="step-n">1</div>
+              <div class="step-body">
+                <h3>Click 🔧 Fix</h3>
+                <p>The button appears on auto-fixable issues.</p>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-n">2</div>
+              <div class="step-body">
+                <h3>Preview diff</h3>
+                <p>A modal shows the YAML <strong>before</strong> (red) and <strong>after</strong> (green). Verify the
+                  proposal.</p>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-n">3</div>
+              <div class="step-body">
+                <h3>Apply</h3>
+                <p>Click <strong>Apply fix</strong>. H.A.C.A creates the backup first, then writes the corrected YAML.
+                </p>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-n">4</div>
+              <div class="step-body">
+                <h3>HA reloads</h3>
+                <p>HA automatically reloads automations. No full restart needed for YAML automations.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════════════
+     PAGE: REPORTS
+════════════════════════════════════════ -->
+    <div id="page-reports" class="page">
+      <div class="doc-section">
+        <div class="fr-content">
+          <span class="page-tag">Utilisation</span>
+          <h1>Historique &amp; Rapports</h1>
+          <p class="lead">Suivez l'évolution de votre installation dans le temps et générez des rapports exportables.
+          </p>
+
+          <h2>Onglet Historique</h2>
+          <p>Chaque scan produit un point de données conservé. Le graphique montre l'évolution du score :</p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Tendance</th>
+                  <th>Signification</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>📈 Hausse</td>
+                  <td>Des issues ont été corrigées — bonne progression</td>
+                </tr>
+                <tr>
+                  <td>📉 Baisse soudaine</td>
+                  <td>Nouvelles automations ajoutées avec problèmes</td>
+                </tr>
+                <tr>
+                  <td>➡️ Stable</td>
+                  <td>Situation stable (bonne ou mauvaise)</td>
+                </tr>
+                <tr>
+                  <td>〰️ Oscillations</td>
+                  <td>Corrections suivies de nouvelles issues</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h2>Générer un rapport</h2>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Format</th>
+                  <th>Contenu</th>
+                  <th>Usage</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>PDF</strong></td>
+                  <td>Rapport formaté, imprimable</td>
+                  <td>Archivage, partage</td>
+                </tr>
+                <tr>
+                  <td><strong>Markdown</strong></td>
+                  <td>Rapport texte structuré</td>
+                  <td>Documentation, Git</td>
+                </tr>
+                <tr>
+                  <td><strong>JSON</strong></td>
+                  <td>Données brutes structurées</td>
+                  <td>Intégrations, scripts</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <p>Dans l'onglet <strong>Rapports</strong> : cliquez <strong>Générer un rapport</strong>, choisissez le
+            format, le rapport apparaît dans la liste avec son horodatage.</p>
+          <div class="code-wrap">
+            <div class="code-header">
+              <div class="code-dots">
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+              </div><span class="code-lang">yaml · Via service HA</span>
+            </div>
+            <pre><span class="c-key">service</span>: <span class="c-str">config_auditor.generate_report</span>
+<span class="c-key">data</span>:
+  <span class="c-key">format</span>: <span class="c-str">pdf</span>    <span class="c-cm"># pdf | markdown | json | all</span></pre>
+          </div>
+
+          <h2>Localisation des rapports</h2>
+          <div class="code-wrap">
+            <div class="code-header">
+              <div class="code-dots">
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+              </div><span class="code-lang">structure fichiers</span>
+            </div>
+            <pre>/config/.haca_reports/
+├── haca_report_20240315_143022.pdf
+├── haca_report_20240315_143022.md
+└── haca_report_20240315_143022.json</pre>
+          </div>
+          <div class="adm adm-tip"><span class="adm-icon">💡</span>
+            <div class="adm-body">Accessible via le <strong>File Editor</strong> ou <strong>Studio Code Server</strong>
+              HA (activez l'affichage des fichiers cachés).</div>
+          </div>
+        </div>
+
+        <div class="en-content" style="display:none">
+          <span class="page-tag">Usage</span>
+          <h1>History &amp; Reports</h1>
+          <p class="lead">Track your installation's evolution over time and generate exportable reports.</p>
+          <h2>History tab</h2>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Trend</th>
+                  <th>Meaning</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>📈 Rising</td>
+                  <td>Issues were fixed — good progress</td>
+                </tr>
+                <tr>
+                  <td>📉 Sudden drop</td>
+                  <td>New automations added with issues</td>
+                </tr>
+                <tr>
+                  <td>➡️ Stable</td>
+                  <td>Stable situation (good or bad)</td>
+                </tr>
+                <tr>
+                  <td>〰️ Oscillating</td>
+                  <td>Fixes followed by new issues</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <h2>Generate a report</h2>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Format</th>
+                  <th>Content</th>
+                  <th>Use</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>PDF</strong></td>
+                  <td>Formatted, printable report</td>
+                  <td>Archive, sharing</td>
+                </tr>
+                <tr>
+                  <td><strong>Markdown</strong></td>
+                  <td>Structured text report</td>
+                  <td>Documentation, Git</td>
+                </tr>
+                <tr>
+                  <td><strong>JSON</strong></td>
+                  <td>Raw structured data</td>
+                  <td>Integrations, scripts</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="code-wrap">
+            <div class="code-header">
+              <div class="code-dots">
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+              </div><span class="code-lang">yaml</span>
+            </div>
+            <pre><span class="c-key">service</span>: <span class="c-str">config_auditor.generate_report</span>
+<span class="c-key">data</span>:
+  <span class="c-key">format</span>: <span class="c-str">pdf</span></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════════════
+     PAGE: BATTERIES
+════════════════════════════════════════ -->
+    <div id="page-batteries" class="page">
+      <div class="doc-section">
+        <div class="fr-content">
+          <span class="page-tag">Utilisation</span>
+          <h1>Batteries &amp; Recorder DB</h1>
+          <p class="lead">Surveillance des niveaux de batterie et analyse de la base de données Recorder.</p>
+
+          <h2>Module Batteries</h2>
+          <p>Surveille en continu le niveau de charge de toutes les entités batterie et alerte sous un seuil
+            configurable.</p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Couleur</th>
+                  <th>Niveau</th>
+                  <th>Action recommandée</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>🔴 Rouge</td>
+                  <td>&lt; 10%</td>
+                  <td>Remplacement urgent</td>
+                </tr>
+                <tr>
+                  <td>🟠 Orange</td>
+                  <td>10–20%</td>
+                  <td>Planifier le remplacement</td>
+                </tr>
+                <tr>
+                  <td>🟢 Vert</td>
+                  <td>&gt; 20%</td>
+                  <td>Niveau acceptable</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <p>Pour modifier le seuil (défaut 20%) : ouvrez le panel <strong>H.A.C.A → onglet ⚙️ Configuration → Seuil
+              alerte batterie</strong></p>
+
+          <h3>Capteurs exposés dans HA</h3>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Capteur</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>sensor.haca_battery_low_count</code></td>
+                  <td>Nombre d'appareils sous le seuil</td>
+                </tr>
+                <tr>
+                  <td><code>sensor.haca_battery_critical_count</code></td>
+                  <td>Nombre d'appareils sous 10%</td>
+                </tr>
+                <tr>
+                  <td><code>sensor.haca_battery_threshold</code></td>
+                  <td>Seuil d'alerte configuré</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="code-wrap">
+            <div class="code-header">
+              <div class="code-dots">
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+              </div><span class="code-lang">yaml · Automatisation alerte batterie</span>
+            </div>
+            <pre><span class="c-key">automation</span>:
+  - <span class="c-key">alias</span>: <span class="c-str">"HACA : Alerte batterie faible"</span>
+    <span class="c-key">trigger</span>:
+      - <span class="c-key">platform</span>: <span class="c-str">numeric_state</span>
+        <span class="c-key">entity_id</span>: <span class="c-str">sensor.haca_battery_low_count</span>
+        <span class="c-key">above</span>: <span class="c-num">0</span>
+    <span class="c-key">action</span>:
+      - <span class="c-key">service</span>: <span class="c-str">notify.mobile_app</span>
+        <span class="c-key">data</span>:
+          <span class="c-key">title</span>: <span class="c-str">"🔋 Batterie(s) faible(s)"</span>
+          <span class="c-key">message</span>: >
+            <span class="c-str">{{ states('sensor.haca_battery_low_count') }} appareil(s)
+            sous {{ states('sensor.haca_battery_threshold') }}%</span></pre>
+          </div>
+
+          <h2>Module Recorder DB</h2>
+          <div class="adm adm-warning"><span class="adm-icon">⚠️</span>
+            <div class="adm-body">
+              <div class="adm-title">Pourquoi c'est important</div>Les entités orphelines (enregistrées en DB mais
+              inexistantes dans HA) gaspillent de l'espace disque et ralentissent les requêtes historiques. Sur de
+              grandes installations, cela peut représenter plusieurs Go de données inutiles.
+            </div>
+          </div>
+
+          <h3>Purger les orphelins</h3>
+          <div class="adm adm-danger"><span class="adm-icon">🔴</span>
+            <div class="adm-body">
+              <div class="adm-title">Action irréversible</div>La purge supprime définitivement les données historiques
+              de ces entités. <strong>Créez une sauvegarde HA complète avant.</strong>
+            </div>
+          </div>
+          <div class="code-wrap">
+            <div class="code-header">
+              <div class="code-dots">
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+              </div><span class="code-lang">yaml</span>
+            </div>
+            <pre><span class="c-key">service</span>: <span class="c-str">config_auditor.purge_recorder_orphans</span></pre>
+          </div>
+
+          <h3>Prévenir les futurs orphelins</h3>
+          <div class="code-wrap">
+            <div class="code-header">
+              <div class="code-dots">
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+              </div><span class="code-lang">yaml · configuration.yaml</span>
+            </div>
+            <pre><span class="c-key">recorder</span>:
+  <span class="c-key">purge_keep_days</span>: <span class="c-num">30</span>
+  <span class="c-key">exclude</span>:
+    <span class="c-key">entity_globs</span>:
+      - <span class="c-str">sensor.time_*</span>
+      - <span class="c-str">sensor.date_*</span>
+    <span class="c-key">domains</span>:
+      - <span class="c-str">weather</span>
+      - <span class="c-str">sun</span></pre>
+          </div>
+        </div>
+
+        <div class="en-content" style="display:none">
+          <span class="page-tag">Usage</span>
+          <h1>Batteries &amp; Recorder DB</h1>
+          <p class="lead">Battery level monitoring and Recorder database analysis.</p>
+          <h2>Battery Monitor</h2>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Color</th>
+                  <th>Level</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>🔴 Red</td>
+                  <td>&lt; 10%</td>
+                  <td>Urgent replacement</td>
+                </tr>
+                <tr>
+                  <td>🟠 Orange</td>
+                  <td>10–20%</td>
+                  <td>Plan replacement soon</td>
+                </tr>
+                <tr>
+                  <td>🟢 Green</td>
+                  <td>&gt; 20%</td>
+                  <td>Acceptable level</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <h3>Exposed HA sensors</h3>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Sensor</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>sensor.haca_battery_low_count</code></td>
+                  <td>Devices below threshold</td>
+                </tr>
+                <tr>
+                  <td><code>sensor.haca_battery_critical_count</code></td>
+                  <td>Devices below 10%</td>
+                </tr>
+                <tr>
+                  <td><code>sensor.haca_battery_threshold</code></td>
+                  <td>Configured alert threshold</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <h2>Recorder DB</h2>
+          <div class="adm adm-danger"><span class="adm-icon">🔴</span>
+            <div class="adm-body">
+              <div class="adm-title">Irreversible action</div>Purge permanently deletes historical data. Create a full
+              HA backup first.
+            </div>
+          </div>
+          <div class="code-wrap">
+            <div class="code-header">
+              <div class="code-dots">
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+              </div><span class="code-lang">yaml</span>
+            </div>
+            <pre><span class="c-key">service</span>: <span class="c-str">config_auditor.purge_recorder_orphans</span></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════════════
+     PAGE: AI
+════════════════════════════════════════ -->
+    <div id="page-ai" class="page">
+      <div class="doc-section">
+        <div class="fr-content">
+          <span class="page-tag">Utilisation</span>
+          <h1>Intelligence Artificielle</h1>
+          <p class="lead">H.A.C.A utilise votre LLM HA existant. Aucune clé API supplémentaire requise.</p>
+
+          <div class="adm adm-note"><span class="adm-icon">⚙️</span>
+            <div class="adm-body">
+              <div class="adm-title">Configuration requise dans HA</div><strong>Paramètres → Général → Suggestion de
+                l'IA</strong> → sélectionnez un agent AI.<br>
+              Providers supportés (ordre de priorité automatique) : Google Gemini · OpenAI · Anthropic Claude · Mistral
+              · Ollama
+            </div>
+          </div>
+          <div class="adm adm-tip"><span class="adm-icon">🏠</span>
+            <div class="adm-body">
+              <div class="adm-title">Ollama — IA 100% locale et gratuite</div><a href="https://ollama.ai"
+                target="_blank">Ollama</a> fait tourner des LLM en local. Aucune donnée envoyée sur internet.
+            </div>
+          </div>
+
+          <h2>Explication des issues par l'IA</h2>
+          <p>Le bouton <strong>🤖 Expliquer</strong> génère pour chaque issue :</p>
+          <ul>
+            <li><strong>Pourquoi</strong> c'est un problème dans votre contexte spécifique</li>
+            <li><strong>Quel risque</strong> cela représente concrètement (pas de jargon)</li>
+            <li><strong>Comment</strong> le corriger manuellement si la correction auto n'est pas disponible</li>
+            <li><strong>Bonnes pratiques</strong> générales liées à ce type d'issue</li>
+          </ul>
+          <div class="adm adm-note"><span class="adm-icon">🔄</span>
+            <div class="adm-body">
+              <div class="adm-title">Fallback sans IA</div>Si aucun LLM n'est disponible, H.A.C.A affiche une
+              explication locale pré-rédigée adaptée au type d'issue.
+            </div>
+          </div>
+
+          <h2>Suggestion de descriptions (no_alias / no_description)</h2>
+          <p>L'IA analyse le YAML de votre automatisation et génère une description pertinente. Exemple :</p>
+          <div class="code-wrap">
+            <div class="code-header">
+              <div class="code-dots">
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+              </div><span class="code-lang">yaml</span>
+            </div>
+            <pre><span class="c-cm"># Automatisation sans description :</span>
+<span class="c-key">trigger</span>:
+  - <span class="c-key">platform</span>: <span class="c-str">state</span>
+    <span class="c-key">entity_id</span>: <span class="c-str">binary_sensor.porte_entree</span>
+    <span class="c-key">to</span>: <span class="c-str">"on"</span>
+<span class="c-key">action</span>:
+  - <span class="c-key">service</span>: <span class="c-str">light.turn_on</span>
+    <span class="c-key">target</span>: { <span class="c-key">entity_id</span>: <span class="c-str">light.couloir</span> }
+
+<span class="c-cm"># IA génère → "Allume la lumière du couloir à l'ouverture de la porte d'entrée."</span></pre>
+          </div>
+          <p>La description est <strong>modifiable</strong> dans le champ texte avant d'appliquer. Si l'IA est
+            indisponible, un fallback basé sur la structure YAML génère une description automatique.</p>
+
+          <h2>Optimiseur d'automatisations complexes</h2>
+          <p>Pour les automatisations avec un <strong>score de complexité ≥ 15</strong>, le bouton
+            <strong>Optimiser</strong> est disponible.
+          </p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Score</th>
+                  <th>Niveau</th>
+                  <th>Action recommandée</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>0–14</td>
+                  <td>Normal</td>
+                  <td>Aucune</td>
+                </tr>
+                <tr>
+                  <td>15–29</td>
+                  <td>Complexe</td>
+                  <td>Révision conseillée</td>
+                </tr>
+                <tr>
+                  <td>30–49</td>
+                  <td>Très complexe</td>
+                  <td>Refactoring recommandé</td>
+                </tr>
+                <tr>
+                  <td>50+</td>
+                  <td>Critique</td>
+                  <td>Découpage urgent</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p>L'optimiseur propose : analyse de complexité, extraction en scripts réutilisables, YAML modernisé complet,
+            suggestion de blueprint si applicable.</p>
+
+          <h2>Limites &amp; quotas</h2>
+          <div class="adm adm-warning"><span class="adm-icon">⚠️</span>
+            <div class="adm-body">
+              <div class="adm-title">Quota Gemini gratuit</div>Limité à <strong>20 requêtes/jour</strong>. H.A.C.A tente
+              automatiquement les providers alternatifs si l'un est épuisé (fallback multi-provider). Aucune
+              fonctionnalité de base n'est affectée par l'indisponibilité de l'IA.
+            </div>
+          </div>
+        </div>
+
+        <div class="en-content" style="display:none">
+          <span class="page-tag">Usage</span>
+          <h1>Artificial Intelligence</h1>
+          <p class="lead">H.A.C.A uses your existing HA LLM. No additional API key required.</p>
+          <div class="adm adm-note"><span class="adm-icon">⚙️</span>
+            <div class="adm-body">
+              <div class="adm-title">Required HA configuration</div><strong>Settings → General → AI Suggestion</strong>
+              → select an agent.<br>Supported providers (auto priority): Google Gemini · OpenAI · Anthropic Claude ·
+              Mistral · Ollama
+            </div>
+          </div>
+          <h2>AI issue explanation</h2>
+          <p>The <strong>🤖 Explain</strong> button generates for each issue: why it's a problem, what risk it
+            represents, how to fix it manually, and best practices for this issue type.</p>
+          <h2>Description suggestions</h2>
+          <p>AI analyzes your automation's YAML and generates a relevant description. The text is editable before
+            applying. If AI is unavailable, a rule-based fallback generates a description from the YAML structure.</p>
+          <h2>Complex automation optimizer</h2>
+          <p>For automations with <strong>complexity score ≥ 15</strong>, the <strong>Optimize</strong> button is
+            available. The optimizer proposes: complexity analysis, script extraction, modernized YAML, and blueprint
+            suggestions.</p>
+          <div class="adm adm-warning"><span class="adm-icon">⚠️</span>
+            <div class="adm-body">
+              <div class="adm-title">Free Gemini quota</div>Limited to 20 requests/day. H.A.C.A automatically tries
+              alternative providers. No core functionality is affected by AI unavailability.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════════════
+     PAGE: REFERENCE ISSUES
+════════════════════════════════════════ -->
+    <div id="page-ref-issues" class="page">
+      <div class="doc-section">
+        <div class="fr-content">
+          <span class="page-tag">Référence</span>
+          <h1>Tous les types d'issues</h1>
+          <p class="lead">Tableau complet de tous les types détectés par H.A.C.A.</p>
+
+          <div class="tab-nav">
+            <button class="tab-btn active" onclick="showTab('ri','auto')">🤖 Automations</button>
+            <button class="tab-btn" onclick="showTab('ri','entity')">📦 Entités</button>
+            <button class="tab-btn" onclick="showTab('ri','perf')">⚡ Performance</button>
+            <button class="tab-btn" onclick="showTab('ri','sec')">🛡️ Sécurité</button>
+            <button class="tab-btn" onclick="showTab('ri','bp')">🧩 Blueprints</button>
+          </div>
+
+          <div id="ri-auto" class="tab-panel active">
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Sévérité</th>
+                    <th>Fix</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><code>device_id_in_trigger</code></td>
+                    <td><span class="sev sev-h">HIGH</span></td>
+                    <td><span class="fix fix-a">Auto</span></td>
+                    <td>Déclencheur utilise device_id — fragile au remplacement matériel</td>
+                  </tr>
+                  <tr>
+                    <td><code>device_id_in_action</code></td>
+                    <td><span class="sev sev-h">HIGH</span></td>
+                    <td><span class="fix fix-a">Auto</span></td>
+                    <td>Action utilise device_id directement</td>
+                  </tr>
+                  <tr>
+                    <td><code>device_id_in_target</code></td>
+                    <td><span class="sev sev-h">HIGH</span></td>
+                    <td><span class="fix fix-a">Auto</span></td>
+                    <td>target.device_id au lieu de target.entity_id</td>
+                  </tr>
+                  <tr>
+                    <td><code>device_trigger_platform</code></td>
+                    <td><span class="sev sev-h">HIGH</span></td>
+                    <td><span class="fix fix-a">Auto</span></td>
+                    <td>Plateforme de déclencheur device</td>
+                  </tr>
+                  <tr>
+                    <td><code>device_id_in_condition</code></td>
+                    <td><span class="sev sev-m">MEDIUM</span></td>
+                    <td><span class="fix fix-a">Auto</span></td>
+                    <td>Condition utilise device_id</td>
+                  </tr>
+                  <tr>
+                    <td><code>device_condition_platform</code></td>
+                    <td><span class="sev sev-m">MEDIUM</span></td>
+                    <td><span class="fix fix-a">Auto</span></td>
+                    <td>Plateforme de condition device</td>
+                  </tr>
+                  <tr>
+                    <td><code>incorrect_mode_motion_single</code></td>
+                    <td><span class="sev sev-h">HIGH</span></td>
+                    <td><span class="fix fix-a">Auto</span></td>
+                    <td>Mode single sur automation mouvement/lumière</td>
+                  </tr>
+                  <tr>
+                    <td><code>duplicate_automation</code></td>
+                    <td><span class="sev sev-m">MEDIUM</span></td>
+                    <td><span class="fix fix-n">Manuel</span></td>
+                    <td>Automation identique à une autre</td>
+                  </tr>
+                  <tr>
+                    <td><code>probable_duplicate_automation</code></td>
+                    <td><span class="sev sev-l">LOW</span></td>
+                    <td><span class="fix fix-n">Manuel</span></td>
+                    <td>Automation très similaire à une autre</td>
+                  </tr>
+                  <tr>
+                    <td><code>ghost_automation</code></td>
+                    <td><span class="sev sev-l">LOW</span></td>
+                    <td><span class="fix fix-n">Manuel</span></td>
+                    <td>Automation jamais déclenchée</td>
+                  </tr>
+                  <tr>
+                    <td><code>never_triggered</code></td>
+                    <td><span class="sev sev-l">LOW</span></td>
+                    <td><span class="fix fix-n">Manuel</span></td>
+                    <td>Aucun déclenchement en mémoire</td>
+                  </tr>
+                  <tr>
+                    <td><code>template_simple_state</code></td>
+                    <td><span class="sev sev-m">MEDIUM</span></td>
+                    <td><span class="fix fix-a">Auto</span></td>
+                    <td>Template remplaçable par condition native</td>
+                  </tr>
+                  <tr>
+                    <td><code>template_time_check</code></td>
+                    <td><span class="sev sev-m">MEDIUM</span></td>
+                    <td><span class="fix fix-n">Manuel</span></td>
+                    <td>Vérification horaire coûteuse en template</td>
+                  </tr>
+                  <tr>
+                    <td><code>template_numeric_comparison</code></td>
+                    <td><span class="sev sev-m">MEDIUM</span></td>
+                    <td><span class="fix fix-n">Manuel</span></td>
+                    <td>Comparaison numérique inefficace en template</td>
+                  </tr>
+                  <tr>
+                    <td><code>no_alias</code></td>
+                    <td><span class="sev sev-l">LOW</span></td>
+                    <td><span class="fix fix-i">IA</span></td>
+                    <td>Automatisation sans nom lisible</td>
+                  </tr>
+                  <tr>
+                    <td><code>no_description</code></td>
+                    <td><span class="sev sev-l">LOW</span></td>
+                    <td><span class="fix fix-i">IA</span></td>
+                    <td>Automatisation sans description</td>
+                  </tr>
+                  <tr>
+                    <td><code>high_complexity_actions</code></td>
+                    <td><span class="sev sev-m">MEDIUM</span></td>
+                    <td><span class="fix fix-i">IA</span></td>
+                    <td>Score de complexité élevé — refactoring suggéré</td>
+                  </tr>
+                  <tr>
+                    <td><code>deprecated_service</code></td>
+                    <td><span class="sev sev-h">HIGH</span></td>
+                    <td><span class="fix fix-n">Manuel</span></td>
+                    <td>Service HA déprécié utilisé</td>
+                  </tr>
+                  <tr>
+                    <td><code>potential_self_loop</code></td>
+                    <td><span class="sev sev-h">HIGH</span></td>
+                    <td><span class="fix fix-n">Manuel</span></td>
+                    <td>Boucle de déclenchement potentielle</td>
+                  </tr>
+                  <tr>
+                    <td><code>excessive_delay</code></td>
+                    <td><span class="sev sev-l">LOW</span></td>
+                    <td><span class="fix fix-n">Manuel</span></td>
+                    <td>Délai &gt; 1h dans une action</td>
+                  </tr>
+                  <tr>
+                    <td><code>high_parallel_max</code></td>
+                    <td><span class="sev sev-m">MEDIUM</span></td>
+                    <td><span class="fix fix-n">Manuel</span></td>
+                    <td>max_exceeded élevé en mode parallel</td>
+                  </tr>
+                  <tr>
+                    <td><code>empty_script</code></td>
+                    <td><span class="sev sev-l">LOW</span></td>
+                    <td><span class="fix fix-n">Manuel</span></td>
+                    <td>Script sans actions</td>
+                  </tr>
+                  <tr>
+                    <td><code>empty_scene</code></td>
+                    <td><span class="sev sev-l">LOW</span></td>
+                    <td><span class="fix fix-n">Manuel</span></td>
+                    <td>Scène sans entités</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div id="ri-entity" class="tab-panel">
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Sévérité</th>
+                    <th>Fix</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><code>unavailable_entity</code></td>
+                    <td><span class="sev sev-h">HIGH</span></td>
+                    <td><span class="fix fix-n">Manuel</span></td>
+                    <td>Entité en état unavailable</td>
+                  </tr>
+                  <tr>
+                    <td><code>stale_entity</code></td>
+                    <td><span class="sev sev-m">MEDIUM</span></td>
+                    <td><span class="fix fix-n">Manuel</span></td>
+                    <td>Entité sans changement d'état depuis longtemps</td>
+                  </tr>
+                  <tr>
+                    <td><code>broken_device_reference</code></td>
+                    <td><span class="sev sev-h">HIGH</span></td>
+                    <td><span class="fix fix-a">Auto</span></td>
+                    <td>Référence à un appareil inexistant</td>
+                  </tr>
+                  <tr>
+                    <td><code>zombie_entity</code></td>
+                    <td><span class="sev sev-m">MEDIUM</span></td>
+                    <td><span class="fix fix-a">Auto</span></td>
+                    <td>Entité dans le registre sans intégration active</td>
+                  </tr>
+                  <tr>
+                    <td><code>ghost_registry_entry</code></td>
+                    <td><span class="sev sev-l">LOW</span></td>
+                    <td><span class="fix fix-n">Manuel</span></td>
+                    <td>Entrée de registre fantôme</td>
+                  </tr>
+                  <tr>
+                    <td><code>unknown_area_reference</code></td>
+                    <td><span class="sev sev-m">MEDIUM</span></td>
+                    <td><span class="fix fix-n">Manuel</span></td>
+                    <td>Référence à une zone inconnue</td>
+                  </tr>
+                  <tr>
+                    <td><code>disabled_but_referenced</code></td>
+                    <td><span class="sev sev-m">MEDIUM</span></td>
+                    <td><span class="fix fix-n">Manuel</span></td>
+                    <td>Entité désactivée mais utilisée dans une automation</td>
+                  </tr>
+                  <tr>
+                    <td><code>missing_state_class</code></td>
+                    <td><span class="sev sev-l">LOW</span></td>
+                    <td><span class="fix fix-n">Manuel</span></td>
+                    <td>state_class manquant sur un capteur numérique</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div id="ri-perf" class="tab-panel">
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Sévérité</th>
+                    <th>Fix</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><code>expensive_template_states_all</code></td>
+                    <td><span class="sev sev-h">HIGH</span></td>
+                    <td><span class="fix fix-n">Manuel</span></td>
+                    <td>Template utilisant states (tous) — très coûteux en CPU</td>
+                  </tr>
+                  <tr>
+                    <td><code>template_time_check</code></td>
+                    <td><span class="sev sev-m">MEDIUM</span></td>
+                    <td><span class="fix fix-n">Manuel</span></td>
+                    <td>Vérification temporelle coûteuse en template</td>
+                  </tr>
+                  <tr>
+                    <td><code>high_parallel_max</code></td>
+                    <td><span class="sev sev-m">MEDIUM</span></td>
+                    <td><span class="fix fix-n">Manuel</span></td>
+                    <td>Valeur max_exceeded excessive en mode parallel</td>
+                  </tr>
+                  <tr>
+                    <td><code>excessive_delay</code></td>
+                    <td><span class="sev sev-l">LOW</span></td>
+                    <td><span class="fix fix-n">Manuel</span></td>
+                    <td>Délai &gt; 1 heure dans une action — risque de blocage</td>
+                  </tr>
+                  <tr>
+                    <td><code>template_numeric_comparison</code></td>
+                    <td><span class="sev sev-m">MEDIUM</span></td>
+                    <td><span class="fix fix-n">Manuel</span></td>
+                    <td>Comparaison numérique inefficace en template</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div id="ri-sec" class="tab-panel">
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Sévérité</th>
+                    <th>Fix</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><code>hardcoded_secret</code></td>
+                    <td><span class="sev sev-h">HIGH</span></td>
+                    <td><span class="fix fix-n">Manuel</span></td>
+                    <td>Secret codé en dur dans un fichier YAML (mot de passe, token…)</td>
+                  </tr>
+                  <tr>
+                    <td><code>sensitive_data_exposure</code></td>
+                    <td><span class="sev sev-h">HIGH</span></td>
+                    <td><span class="fix fix-n">Manuel</span></td>
+                    <td>Données sensibles exposées en clair</td>
+                  </tr>
+                  <tr>
+                    <td><code>missing_state_class</code></td>
+                    <td><span class="sev sev-l">LOW</span></td>
+                    <td><span class="fix fix-n">Manuel</span></td>
+                    <td>state_class manquant — problème de conformité</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div id="ri-bp" class="tab-panel">
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Sévérité</th>
+                    <th>Fix</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><code>blueprint_file_not_found</code></td>
+                    <td><span class="sev sev-h">HIGH</span></td>
+                    <td><span class="fix fix-n">Manuel</span></td>
+                    <td>Fichier blueprint introuvable</td>
+                  </tr>
+                  <tr>
+                    <td><code>blueprint_missing_path</code></td>
+                    <td><span class="sev sev-h">HIGH</span></td>
+                    <td><span class="fix fix-n">Manuel</span></td>
+                    <td>Chemin de blueprint manquant</td>
+                  </tr>
+                  <tr>
+                    <td><code>blueprint_empty_input</code></td>
+                    <td><span class="sev sev-m">MEDIUM</span></td>
+                    <td><span class="fix fix-n">Manuel</span></td>
+                    <td>Input de blueprint vide ou non renseigné</td>
+                  </tr>
+                  <tr>
+                    <td><code>blueprint_no_inputs</code></td>
+                    <td><span class="sev sev-l">LOW</span></td>
+                    <td><span class="fix fix-n">Manuel</span></td>
+                    <td>Blueprint sans aucun input défini</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div><!-- /fr -->
+
+        <div class="en-content" style="display:none">
+          <span class="page-tag">Reference</span>
+          <h1>All Issue Types</h1>
+          <p class="lead">Complete table of all types detected by H.A.C.A.</p>
+          <div class="tab-nav">
+            <button class="tab-btn active" onclick="showTab('rie','auto')">🤖 Automations</button>
+            <button class="tab-btn" onclick="showTab('rie','entity')">📦 Entities</button>
+            <button class="tab-btn" onclick="showTab('rie','perf')">⚡ Performance</button>
+            <button class="tab-btn" onclick="showTab('rie','sec')">🛡️ Security</button>
+          </div>
+          <div id="rie-auto" class="tab-panel active">
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Severity</th>
+                    <th>Fix</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><code>device_id_in_trigger</code></td>
+                    <td><span class="sev sev-h">HIGH</span></td>
+                    <td><span class="fix fix-a">Auto</span></td>
+                    <td>Trigger uses device_id — breaks on hardware replacement</td>
+                  </tr>
+                  <tr>
+                    <td><code>device_id_in_action</code></td>
+                    <td><span class="sev sev-h">HIGH</span></td>
+                    <td><span class="fix fix-a">Auto</span></td>
+                    <td>Action uses device_id directly</td>
+                  </tr>
+                  <tr>
+                    <td><code>device_id_in_target</code></td>
+                    <td><span class="sev sev-h">HIGH</span></td>
+                    <td><span class="fix fix-a">Auto</span></td>
+                    <td>target.device_id instead of target.entity_id</td>
+                  </tr>
+                  <tr>
+                    <td><code>incorrect_mode_motion_single</code></td>
+                    <td><span class="sev sev-h">HIGH</span></td>
+                    <td><span class="fix fix-a">Auto</span></td>
+                    <td>single mode on motion/light automation</td>
+                  </tr>
+                  <tr>
+                    <td><code>template_simple_state</code></td>
+                    <td><span class="sev sev-m">MEDIUM</span></td>
+                    <td><span class="fix fix-a">Auto</span></td>
+                    <td>Template replaceable by native condition</td>
+                  </tr>
+                  <tr>
+                    <td><code>no_alias</code> / <code>no_description</code></td>
+                    <td><span class="sev sev-l">LOW</span></td>
+                    <td><span class="fix fix-i">AI</span></td>
+                    <td>Automation without name or description</td>
+                  </tr>
+                  <tr>
+                    <td><code>high_complexity_actions</code></td>
+                    <td><span class="sev sev-m">MEDIUM</span></td>
+                    <td><span class="fix fix-i">AI</span></td>
+                    <td>High complexity score — refactoring suggested</td>
+                  </tr>
+                  <tr>
+                    <td><code>potential_self_loop</code></td>
+                    <td><span class="sev sev-h">HIGH</span></td>
+                    <td><span class="fix fix-n">Manual</span></td>
+                    <td>Potential self-triggering loop</td>
+                  </tr>
+                  <tr>
+                    <td><code>duplicate_automation</code></td>
+                    <td><span class="sev sev-m">MEDIUM</span></td>
+                    <td><span class="fix fix-n">Manual</span></td>
+                    <td>Identical to another automation</td>
+                  </tr>
+                  <tr>
+                    <td><code>deprecated_service</code></td>
+                    <td><span class="sev sev-h">HIGH</span></td>
+                    <td><span class="fix fix-n">Manual</span></td>
+                    <td>Deprecated HA service used</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div id="rie-entity" class="tab-panel">
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Severity</th>
+                    <th>Fix</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><code>unavailable_entity</code></td>
+                    <td><span class="sev sev-h">HIGH</span></td>
+                    <td><span class="fix fix-n">Manual</span></td>
+                    <td>Entity in unavailable state</td>
+                  </tr>
+                  <tr>
+                    <td><code>stale_entity</code></td>
+                    <td><span class="sev sev-m">MEDIUM</span></td>
+                    <td><span class="fix fix-n">Manual</span></td>
+                    <td>Entity with no state change for too long</td>
+                  </tr>
+                  <tr>
+                    <td><code>broken_device_reference</code></td>
+                    <td><span class="sev sev-h">HIGH</span></td>
+                    <td><span class="fix fix-a">Auto</span></td>
+                    <td>Reference to nonexistent device</td>
+                  </tr>
+                  <tr>
+                    <td><code>zombie_entity</code></td>
+                    <td><span class="sev sev-m">MEDIUM</span></td>
+                    <td><span class="fix fix-a">Auto</span></td>
+                    <td>Entity in registry with no active integration</td>
+                  </tr>
+                  <tr>
+                    <td><code>disabled_but_referenced</code></td>
+                    <td><span class="sev sev-m">MEDIUM</span></td>
+                    <td><span class="fix fix-n">Manual</span></td>
+                    <td>Entity disabled but used in an automation</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div id="rie-perf" class="tab-panel">
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Severity</th>
+                    <th>Fix</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><code>expensive_template_states_all</code></td>
+                    <td><span class="sev sev-h">HIGH</span></td>
+                    <td><span class="fix fix-n">Manual</span></td>
+                    <td>Template using states.all — very CPU-expensive</td>
+                  </tr>
+                  <tr>
+                    <td><code>excessive_delay</code></td>
+                    <td><span class="sev sev-l">LOW</span></td>
+                    <td><span class="fix fix-n">Manual</span></td>
+                    <td>Delay &gt; 1 hour in an action</td>
+                  </tr>
+                  <tr>
+                    <td><code>template_numeric_comparison</code></td>
+                    <td><span class="sev sev-m">MEDIUM</span></td>
+                    <td><span class="fix fix-n">Manual</span></td>
+                    <td>Inefficient numeric comparison in template</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div id="rie-sec" class="tab-panel">
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Severity</th>
+                    <th>Fix</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><code>hardcoded_secret</code></td>
+                    <td><span class="sev sev-h">HIGH</span></td>
+                    <td><span class="fix fix-n">Manual</span></td>
+                    <td>Secret hardcoded in a YAML file</td>
+                  </tr>
+                  <tr>
+                    <td><code>sensitive_data_exposure</code></td>
+                    <td><span class="sev sev-h">HIGH</span></td>
+                    <td><span class="fix fix-n">Manual</span></td>
+                    <td>Sensitive data exposed in plaintext</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════════════
+     PAGE: REFERENCE SERVICES
+════════════════════════════════════════ -->
+    <div id="page-ref-services" class="page">
+      <div class="doc-section">
+        <div class="fr-content">
+          <span class="page-tag">Référence</span>
+          <h1>Services HA</h1>
+          <p class="lead">Tous les services Home Assistant exposés par H.A.C.A, utilisables dans vos automatisations ou
+            via les Outils de développement.</p>
+
+          <h2>Scans</h2>
+          <div class="code-wrap">
+            <div class="code-header">
+              <div class="code-dots">
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+              </div><span class="code-lang">yaml</span>
+            </div>
+            <pre><span class="c-cm"># Audit complet (automations + entités + performance + sécurité)</span>
+<span class="c-key">service</span>: <span class="c-str">config_auditor.scan_all</span>
+
+<span class="c-cm"># Scan sélectif (plus rapide)</span>
+<span class="c-key">service</span>: <span class="c-str">config_auditor.scan_automations</span>
+<span class="c-key">service</span>: <span class="c-str">config_auditor.scan_entities</span>
+<span class="c-key">service</span>: <span class="c-str">config_auditor.scan_performance</span></pre>
+          </div>
+
+          <h2>Corrections</h2>
+          <div class="code-wrap">
+            <div class="code-header">
+              <div class="code-dots">
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+              </div><span class="code-lang">yaml</span>
+            </div>
+            <pre><span class="c-cm"># Prévisualiser la correction device_id (retourne current_yaml + new_yaml)</span>
+<span class="c-key">service</span>: <span class="c-str">config_auditor.preview_device_id</span>
+<span class="c-key">data</span>:
+  <span class="c-key">automation_id</span>: <span class="c-str">"1234567890abc"</span>
+
+<span class="c-cm"># Appliquer la correction device_id (backup automatique)</span>
+<span class="c-key">service</span>: <span class="c-str">config_auditor.fix_device_id</span>
+<span class="c-key">data</span>:
+  <span class="c-key">automation_id</span>: <span class="c-str">"1234567890abc"</span>
+  <span class="c-key">dry_run</span>: <span class="c-kw">false</span>
+
+<span class="c-cm"># Prévisualiser changement de mode</span>
+<span class="c-key">service</span>: <span class="c-str">config_auditor.preview_mode</span>
+<span class="c-key">data</span>:
+  <span class="c-key">automation_id</span>: <span class="c-str">"1234567890abc"</span>
+  <span class="c-key">mode</span>: <span class="c-str">"restart"</span>   <span class="c-cm"># single | restart | queued | parallel</span>
+
+<span class="c-cm"># Appliquer changement de mode</span>
+<span class="c-key">service</span>: <span class="c-str">config_auditor.fix_mode</span>
+<span class="c-key">data</span>:
+  <span class="c-key">automation_id</span>: <span class="c-str">"1234567890abc"</span>
+  <span class="c-key">mode</span>: <span class="c-str">"restart"</span>
+
+<span class="c-cm"># Restaurer une sauvegarde</span>
+<span class="c-key">service</span>: <span class="c-str">config_auditor.restore_backup</span>
+<span class="c-key">data</span>:
+  <span class="c-key">backup_path</span>: <span class="c-str">".haca_backups/automations_20240315.yaml"</span></pre>
+          </div>
+
+          <h2>Rapports</h2>
+          <div class="code-wrap">
+            <div class="code-header">
+              <div class="code-dots">
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+              </div><span class="code-lang">yaml</span>
+            </div>
+            <pre><span class="c-cm"># Générer un rapport</span>
+<span class="c-key">service</span>: <span class="c-str">config_auditor.generate_report</span>
+<span class="c-key">data</span>:
+  <span class="c-key">format</span>: <span class="c-str">pdf</span>   <span class="c-cm"># pdf | markdown | json | all</span>
+
+<span class="c-cm"># Lister les rapports existants</span>
+<span class="c-key">service</span>: <span class="c-str">config_auditor.list_reports</span></pre>
+          </div>
+
+          <h2>IA</h2>
+          <div class="code-wrap">
+            <div class="code-header">
+              <div class="code-dots">
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+              </div><span class="code-lang">yaml</span>
+            </div>
+            <pre><span class="c-cm"># Suggérer une description pour une automation/script</span>
+<span class="c-key">service</span>: <span class="c-str">config_auditor.suggest_description_ai</span>
+<span class="c-key">data</span>:
+  <span class="c-key">entity_id</span>: <span class="c-str">"automation.lumieres_salon"</span></pre>
+          </div>
+        </div>
+
+        <div class="en-content" style="display:none">
+          <span class="page-tag">Reference</span>
+          <h1>HA Services</h1>
+          <p class="lead">All Home Assistant services exposed by H.A.C.A.</p>
+          <div class="code-wrap">
+            <div class="code-header">
+              <div class="code-dots">
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+              </div><span class="code-lang">yaml</span>
+            </div>
+            <pre><span class="c-cm"># Full audit</span>
+<span class="c-key">service</span>: <span class="c-str">config_auditor.scan_all</span>
+
+<span class="c-cm"># Selective scans</span>
+<span class="c-key">service</span>: <span class="c-str">config_auditor.scan_automations</span>
+<span class="c-key">service</span>: <span class="c-str">config_auditor.scan_entities</span>
+
+<span class="c-cm"># Preview device_id fix</span>
+<span class="c-key">service</span>: <span class="c-str">config_auditor.preview_device_id</span>
+<span class="c-key">data</span>: { <span class="c-key">automation_id</span>: <span class="c-str">"abc123"</span> }
+
+<span class="c-cm"># Apply device_id fix</span>
+<span class="c-key">service</span>: <span class="c-str">config_auditor.fix_device_id</span>
+<span class="c-key">data</span>: { <span class="c-key">automation_id</span>: <span class="c-str">"abc123"</span>, <span class="c-key">dry_run</span>: <span class="c-kw">false</span> }
+
+<span class="c-cm"># Generate report</span>
+<span class="c-key">service</span>: <span class="c-str">config_auditor.generate_report</span>
+<span class="c-key">data</span>: { <span class="c-key">format</span>: <span class="c-str">pdf</span> }</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════════════
+     PAGE: REFERENCE CONFIG
+════════════════════════════════════════ -->
+    <div id="page-ref-config" class="page">
+      <div class="doc-section">
+        <div class="fr-content">
+          <span class="page-tag">Référence</span>
+          <h1>Configuration</h1>
+          <p class="lead">Options de l'intégration, structure des fichiers et niveaux de log.</p>
+
+          <h2>Options de l'intégration</h2>
+          <p>Accès : <strong>Panel H.A.C.A → onglet ⚙️ Configuration</strong></p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Option</th>
+                  <th>Type</th>
+                  <th>Défaut</th>
+                  <th>Plage</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>scan_interval</code></td>
+                  <td>int</td>
+                  <td>60</td>
+                  <td>5–1440</td>
+                  <td>Intervalle de scan automatique en minutes</td>
+                </tr>
+                <tr>
+                  <td><code>battery_alert_threshold</code></td>
+                  <td>int</td>
+                  <td>20</td>
+                  <td>1–50</td>
+                  <td>Seuil d'alerte batterie en %</td>
+                </tr>
+                <tr>
+                  <td><code>notifications_enabled</code></td>
+                  <td>bool</td>
+                  <td>true</td>
+                  <td>—</td>
+                  <td>Activer les notifications HA lors de nouvelles issues</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="adm adm-note"><span class="adm-icon">ℹ️</span>
+            <div class="adm-body">H.A.C.A ne nécessite aucune configuration dans <code>configuration.yaml</code>. Tout
+              se configure via l'interface graphique.</div>
+          </div>
+
+          <h2>Structure des fichiers</h2>
+          <div class="code-wrap">
+            <div class="code-header">
+              <div class="code-dots">
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+              </div><span class="code-lang">structure</span>
+            </div>
+            <pre>/config/
+├── custom_components/config_auditor/   <span class="c-cm"># Code de l'intégration</span>
+├── .haca_backups/                      <span class="c-cm"># Sauvegardes YAML avant corrections</span>
+│   ├── automations_20240315_143022.yaml
+│   └── scripts_20240310_091500.yaml
+└── .haca_reports/                      <span class="c-cm"># Rapports générés</span>
+    ├── haca_report_20240315.pdf
+    ├── haca_report_20240315.md
+    └── haca_report_20240315.json</pre>
+          </div>
+
+          <h2>Niveaux de log</h2>
+          <div class="code-wrap">
+            <div class="code-header">
+              <div class="code-dots">
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+              </div><span class="code-lang">yaml · configuration.yaml</span>
+            </div>
+            <pre><span class="c-key">logger</span>:
+  <span class="c-key">logs</span>:
+    <span class="c-key">custom_components.config_auditor</span>: <span class="c-str">debug</span>  <span class="c-cm"># debug|info|warning|error</span></pre>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Niveau</th>
+                  <th>Verbosité</th>
+                  <th>Usage</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>error</code></td>
+                  <td>Minimum</td>
+                  <td>Production normale</td>
+                </tr>
+                <tr>
+                  <td><code>warning</code></td>
+                  <td>Faible</td>
+                  <td>Par défaut</td>
+                </tr>
+                <tr>
+                  <td><code>info</code></td>
+                  <td>Moyen</td>
+                  <td>Suivi des scans</td>
+                </tr>
+                <tr>
+                  <td><code>debug</code></td>
+                  <td>Maximum</td>
+                  <td>Débogage — très verbeux</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="en-content" style="display:none">
+          <span class="page-tag">Reference</span>
+          <h1>Configuration</h1>
+          <h2>Integration options</h2>
+          <p><strong>H.A.C.A panel → ⚙️ Configuration tab</strong></p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Option</th>
+                  <th>Type</th>
+                  <th>Default</th>
+                  <th>Range</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>scan_interval</code></td>
+                  <td>int</td>
+                  <td>60</td>
+                  <td>5–1440</td>
+                  <td>Auto-scan interval in minutes</td>
+                </tr>
+                <tr>
+                  <td><code>battery_alert_threshold</code></td>
+                  <td>int</td>
+                  <td>20</td>
+                  <td>1–50</td>
+                  <td>Battery alert threshold in %</td>
+                </tr>
+                <tr>
+                  <td><code>notifications_enabled</code></td>
+                  <td>bool</td>
+                  <td>true</td>
+                  <td>—</td>
+                  <td>Enable HA notifications for new issues</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <h2>File structure</h2>
+          <div class="code-wrap">
+            <div class="code-header">
+              <div class="code-dots">
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+              </div><span class="code-lang">structure</span>
+            </div>
+            <pre>/config/
+├── custom_components/config_auditor/
+├── .haca_backups/
+└── .haca_reports/</pre>
+          </div>
+          <h2>Log levels</h2>
+          <div class="code-wrap">
+            <div class="code-header">
+              <div class="code-dots">
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+              </div><span class="code-lang">yaml</span>
+            </div>
+            <pre><span class="c-key">logger</span>:
+  <span class="c-key">logs</span>:
+    <span class="c-key">custom_components.config_auditor</span>: <span class="c-str">debug</span></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════════════
+     PAGE: ARCHITECTURE
+════════════════════════════════════════ -->
+    <div id="page-arch" class="page">
+      <div class="doc-section">
+        <div class="fr-content">
+          <span class="page-tag">Contribution</span>
+          <h1>Architecture du projet</h1>
+          <p class="lead">H.A.C.A est construit sur une architecture modulaire facilitant les contributions.</p>
+
+          <div class="code-wrap">
+            <div class="code-header">
+              <div class="code-dots">
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+              </div><span class="code-lang">arbre projet</span>
+            </div>
+            <pre>ha-config-auditor/
+├── custom_components/
+│   └── config_auditor/
+│       ├── __init__.py                  <span class="c-cm"># Entrée principale, setup HA</span>
+│       ├── manifest.json                <span class="c-cm"># Métadonnées intégration</span>
+│       ├── config_flow.py               <span class="c-cm"># Config Flow UI</span>
+│       ├── const.py                     <span class="c-cm"># Constantes globales</span>
+│       ├── models.py                    <span class="c-cm"># Dataclasses partagées</span>
+│       │
+│       ├── <span class="c-cm">── Analyseurs ──────────────────────────────</span>
+│       ├── automation_analyzer.py       <span class="c-cm"># Analyse automations/scripts/scènes</span>
+│       ├── entity_analyzer.py           <span class="c-cm"># Analyse entités</span>
+│       ├── performance_analyzer.py      <span class="c-cm"># Analyse performance</span>
+│       ├── security_analyzer.py         <span class="c-cm"># Analyse sécurité</span>
+│       ├── dashboard_analyzer.py        <span class="c-cm"># Analyse dashboards Lovelace</span>
+│       ├── dependency_mapper.py         <span class="c-cm"># Graphe de dépendances</span>
+│       │
+│       ├── <span class="c-cm">── Fonctionnalités ─────────────────────────</span>
+│       ├── refactoring_assistant.py     <span class="c-cm"># Corrections YAML + backups</span>
+│       ├── automation_optimizer.py      <span class="c-cm"># Optimisation complexité + IA</span>
+│       ├── conversation.py              <span class="c-cm"># Bridge IA (ai_task) multi-provider</span>
+│       ├── battery_monitor.py           <span class="c-cm"># Surveillance batteries</span>
+│       ├── recorder_analyzer.py         <span class="c-cm"># Analyse base Recorder</span>
+│       ├── history_manager.py           <span class="c-cm"># Historique scores SQLite</span>
+│       ├── report_generator.py          <span class="c-cm"># Génération PDF/MD/JSON</span>
+│       ├── health_score.py              <span class="c-cm"># Calcul score de santé</span>
+│       │
+│       ├── <span class="c-cm">── Infrastructure ──────────────────────────</span>
+│       ├── websocket.py                 <span class="c-cm"># Handlers WebSocket panel ↔ backend</span>
+│       ├── custom_panel.py              <span class="c-cm"># Panel sidebar</span>
+│       ├── sensor.py                    <span class="c-cm"># Capteurs HA (score, batteries…)</span>
+│       ├── services.py                  <span class="c-cm"># Enregistrement services HA</span>
+│       ├── services.yaml                <span class="c-cm"># Schémas et descriptions services</span>
+│       │
+│       ├── <span class="c-cm">── I18n ─────────────────────────────────────</span>
+│       ├── strings.json                 <span class="c-cm"># Chaînes Config Flow</span>
+│       ├── translation_utils.py         <span class="c-cm"># Utilitaires traduction</span>
+│       └── translations/
+│           ├── fr.json
+│           └── en.json
+│
+├── www/
+│   ├── src/
+│   │   ├── core.js                      <span class="c-cm"># Composant principal (LitElement)</span>
+│   │   ├── battery.js                   <span class="c-cm"># Issues, corrections, modals</span>
+│   │   ├── pagination.js                <span class="c-cm"># Mixin pagination</span>
+│   │   └── optimizer.js                 <span class="c-cm"># Interface optimiseur IA</span>
+│   ├── build.sh                         <span class="c-cm"># Script de build (concat + hash)</span>
+│   └── haca-panel.js                    <span class="c-cm"># Bundle final (généré)</span>
+│
+└── tests/
+    ├── conftest.py                       <span class="c-cm"># Fixtures partagées (MockHass)</span>
+    ├── test_automation_analyzer.py
+    ├── test_refactoring_assistant.py
+    └── test_entity_analyzer.py</pre>
+          </div>
+
+          <h2>Modules clés</h2>
+          <div class="arch-grid">
+            <div class="arch-card">
+              <div class="arch-file">__init__.py</div>
+              <div class="arch-desc">Setup, enregistrement coordinateur, sensors, services et panel</div>
+            </div>
+            <div class="arch-card">
+              <div class="arch-file">automation_analyzer.py</div>
+              <div class="arch-desc">Détecte 23+ types d'issues dans automations, scripts et scènes</div>
+            </div>
+            <div class="arch-card">
+              <div class="arch-file">refactoring_assistant.py</div>
+              <div class="arch-desc">Preview diff + application corrections + backup YAML</div>
+            </div>
+            <div class="arch-card">
+              <div class="arch-file">conversation.py</div>
+              <div class="arch-desc">Bridge IA avec fallback multi-provider automatique</div>
+            </div>
+            <div class="arch-card">
+              <div class="arch-file">health_score.py</div>
+              <div class="arch-desc">Calcul du score de santé global (pénalités par sévérité)</div>
+            </div>
+            <div class="arch-card">
+              <div class="arch-file">websocket.py</div>
+              <div class="arch-desc">Tous les handlers WebSocket (haca/*) entre panel JS et backend</div>
+            </div>
+            <div class="arch-card">
+              <div class="arch-file">battery.js</div>
+              <div class="arch-desc">Logique métier frontend : modals, diff rendering, event delegation</div>
+            </div>
+            <div class="arch-card">
+              <div class="arch-file">core.js</div>
+              <div class="arch-desc">LitElement principal, tabs, Shadow DOM, updateUI()</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="en-content" style="display:none">
+          <span class="page-tag">Contributing</span>
+          <h1>Project Architecture</h1>
+          <p class="lead">H.A.C.A is built on a modular architecture to make contributing easy.</p>
+          <div class="arch-grid">
+            <div class="arch-card">
+              <div class="arch-file">__init__.py</div>
+              <div class="arch-desc">Setup, coordinator, sensor, service and panel registration</div>
+            </div>
+            <div class="arch-card">
+              <div class="arch-file">automation_analyzer.py</div>
+              <div class="arch-desc">Detects 23+ issue types in automations, scripts and scenes</div>
+            </div>
+            <div class="arch-card">
+              <div class="arch-file">refactoring_assistant.py</div>
+              <div class="arch-desc">Diff preview + fix application + YAML backup</div>
+            </div>
+            <div class="arch-card">
+              <div class="arch-file">conversation.py</div>
+              <div class="arch-desc">AI bridge with automatic multi-provider fallback</div>
+            </div>
+            <div class="arch-card">
+              <div class="arch-file">health_score.py</div>
+              <div class="arch-desc">Global health score calculation (penalties by severity)</div>
+            </div>
+            <div class="arch-card">
+              <div class="arch-file">websocket.py</div>
+              <div class="arch-desc">All WebSocket handlers (haca/*) between JS panel and backend</div>
+            </div>
+            <div class="arch-card">
+              <div class="arch-file">battery.js</div>
+              <div class="arch-desc">Frontend business logic: modals, diff rendering, event delegation</div>
+            </div>
+            <div class="arch-card">
+              <div class="arch-file">core.js</div>
+              <div class="arch-desc">Main LitElement, tabs, Shadow DOM, updateUI()</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════════════
+     PAGE: DEV GUIDE
+════════════════════════════════════════ -->
+    <div id="page-devguide" class="page">
+      <div class="doc-section">
+        <div class="fr-content">
+          <span class="page-tag">Contribution</span>
+          <h1>Guide développeur</h1>
+          <p class="lead">Patterns clés, conventions et pièges à connaître avant de contribuer.</p>
+
+          <h2>Backend Python — Patterns HA</h2>
+
+          <h3>Toujours async</h3>
+          <div class="code-wrap">
+            <div class="code-header">
+              <div class="code-dots">
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+              </div><span class="code-lang">python</span>
+            </div>
+            <pre><span class="c-cm"># ❌ Bloquant — ne jamais faire</span>
+<span class="c-kw">def</span> <span class="c-op">load_yaml</span>(path):
+    <span class="c-kw">with</span> open(path) <span class="c-kw">as</span> f:
+        <span class="c-kw">return</span> yaml.safe_load(f)
+
+<span class="c-cm"># ✅ Non-bloquant — via executor</span>
+<span class="c-kw">async def</span> <span class="c-op">async_load_yaml</span>(hass, path):
+    <span class="c-kw">return await</span> hass.async_add_executor_job(
+        <span class="c-kw">lambda</span>: yaml.safe_load(open(path))
+    )</pre>
+          </div>
+
+          <h3>Registre d'entités</h3>
+          <div class="code-wrap">
+            <div class="code-header">
+              <div class="code-dots">
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+              </div><span class="code-lang">python</span>
+            </div>
+            <pre><span class="c-kw">from</span> homeassistant.helpers <span class="c-kw">import</span> entity_registry <span class="c-kw">as</span> er
+
+<span class="c-cm"># ✅ Utiliser le registre (métadonnées riches)</span>
+registry = er.async_get(hass)
+entry = registry.async_get(<span class="c-str">"sensor.mon_capteur"</span>)
+<span class="c-kw">if</span> entry:
+    device_id = entry.device_id
+    unique_id = entry.unique_id</pre>
+          </div>
+
+          <h3>Validation des services avec voluptuous</h3>
+          <div class="code-wrap">
+            <div class="code-header">
+              <div class="code-dots">
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+              </div><span class="code-lang">python</span>
+            </div>
+            <pre><span class="c-kw">import</span> voluptuous <span class="c-kw">as</span> vol
+
+SERVICE_SCHEMA = vol.Schema({
+    vol.Required(<span class="c-str">"automation_id"</span>): str,
+    vol.Optional(<span class="c-str">"dry_run"</span>, default=<span class="c-kw">False</span>): bool,
+})</pre>
+          </div>
+
+          <h2>Frontend JS — Règles critiques</h2>
+
+          <h3>Shadow DOM — toujours appender au body</h3>
+          <div class="code-wrap">
+            <div class="code-header">
+              <div class="code-dots">
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+              </div><span class="code-lang">javascript</span>
+            </div>
+            <pre><span class="c-cm">// ❌ Invisible avec Shadow DOM (Light DOM non rendu)</span>
+this.appendChild(modal);
+
+<span class="c-cm">// ✅ Toujours visible quel que soit le contexte Shadow DOM</span>
+document.body.appendChild(modal);</pre>
+          </div>
+
+          <h3>Event Delegation obligatoire</h3>
+          <div class="code-wrap">
+            <div class="code-header">
+              <div class="code-dots">
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+              </div><span class="code-lang">javascript</span>
+            </div>
+            <pre><span class="c-cm">// ❌ Fragile — listener perdu après innerHTML =</span>
+container.querySelectorAll(<span class="c-str">'.btn'</span>).forEach(btn =&gt;
+    btn.addEventListener(<span class="c-str">'click'</span>, handler));
+
+<span class="c-cm">// ✅ Robuste — un seul listener stable sur le conteneur</span>
+<span class="c-kw">if</span> (!container._delegated) {
+    container._delegated = <span class="c-kw">true</span>;
+    container.addEventListener(<span class="c-str">'click'</span>, e =&gt; {
+        <span class="c-kw">const</span> btn = e.target.closest(<span class="c-str">'.btn'</span>);
+        <span class="c-kw">if</span> (btn) handler(btn);
+    });
+}</pre>
+          </div>
+
+          <h3>Communication WebSocket panel ↔ backend</h3>
+          <div class="code-wrap">
+            <div class="code-header">
+              <div class="code-dots">
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+              </div><span class="code-lang">javascript · frontend</span>
+            </div>
+            <pre><span class="c-cm">// Appel WebSocket depuis le panel</span>
+<span class="c-kw">const</span> result = <span class="c-kw">await</span> this.hass.callWS({
+    type: <span class="c-str">'haca/preview_fix'</span>,
+    automation_id: id,
+    fix_type: <span class="c-str">'device_id'</span>
+});</pre>
+          </div>
+          <div class="code-wrap">
+            <div class="code-header">
+              <div class="code-dots">
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+              </div><span class="code-lang">python · backend websocket.py</span>
+            </div>
+            <pre><span class="c-op">@websocket_api.websocket_command</span>({
+    vol.Required(<span class="c-str">"type"</span>): <span class="c-str">"haca/preview_fix"</span>,
+    vol.Required(<span class="c-str">"automation_id"</span>): str,
+    vol.Required(<span class="c-str">"fix_type"</span>): str,
+})
+<span class="c-kw">async def</span> <span class="c-op">ws_preview_fix</span>(hass, connection, msg):
+    result = <span class="c-kw">await</span> refactoring.preview_device_id_fix(msg[<span class="c-str">"automation_id"</span>])
+    connection.send_result(msg[<span class="c-str">"id"</span>], result)</pre>
+          </div>
+
+          <h2>Build du panel JS</h2>
+          <div class="code-wrap">
+            <div class="code-header">
+              <div class="code-dots">
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+              </div><span class="code-lang">bash</span>
+            </div>
+            <pre><span class="c-cm"># Concatène src/ et génère haca-panel.js avec hash de build</span>
+cd www/ && bash build.sh
+
+<span class="c-cm"># Vérification syntaxe</span>
+node --check www/haca-panel.js
+
+<span class="c-cm"># ⚠️ Toujours vider le cache navigateur après build (Ctrl+Shift+R)</span></pre>
+          </div>
+        </div>
+
+        <div class="en-content" style="display:none">
+          <span class="page-tag">Contributing</span>
+          <h1>Developer Guide</h1>
+          <p class="lead">Key patterns, conventions and pitfalls to know before contributing.</p>
+          <h2>Backend Python — HA Patterns</h2>
+          <h3>Always async</h3>
+          <div class="code-wrap">
+            <div class="code-header">
+              <div class="code-dots">
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+              </div><span class="code-lang">python</span>
+            </div>
+            <pre><span class="c-cm"># ✅ Non-blocking via executor</span>
+<span class="c-kw">async def</span> <span class="c-op">async_load_yaml</span>(hass, path):
+    <span class="c-kw">return await</span> hass.async_add_executor_job(
+        <span class="c-kw">lambda</span>: yaml.safe_load(open(path))
+    )</pre>
+          </div>
+          <h3>Shadow DOM — always append to body</h3>
+          <div class="code-wrap">
+            <div class="code-header">
+              <div class="code-dots">
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+              </div><span class="code-lang">javascript</span>
+            </div>
+            <pre><span class="c-cm">// ✅ Always visible regardless of Shadow DOM</span>
+document.body.appendChild(modal);</pre>
+          </div>
+          <h3>Event Delegation</h3>
+          <div class="code-wrap">
+            <div class="code-header">
+              <div class="code-dots">
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+              </div><span class="code-lang">javascript</span>
+            </div>
+            <pre><span class="c-kw">if</span> (!container._delegated) {
+    container._delegated = <span class="c-kw">true</span>;
+    container.addEventListener(<span class="c-str">'click'</span>, e =&gt; {
+        <span class="c-kw">const</span> btn = e.target.closest(<span class="c-str">'.btn'</span>);
+        <span class="c-kw">if</span> (btn) handler(btn);
+    });
+}</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════════════
+     PAGE: TESTS
+════════════════════════════════════════ -->
+    <div id="page-tests" class="page">
+      <div class="doc-section">
+        <div class="fr-content">
+          <span class="page-tag">Contribution</span>
+          <h1>Tests</h1>
+          <p class="lead">Suite de tests unitaires et d'intégration pour H.A.C.A.</p>
+
+          <h2>Lancer les tests</h2>
+          <div class="code-wrap">
+            <div class="code-header">
+              <div class="code-dots">
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+              </div><span class="code-lang">bash</span>
+            </div>
+            <pre><span class="c-cm"># Prérequis</span>
+pip install pytest pytest-asyncio homeassistant --break-system-packages
+
+<span class="c-cm"># Lancer tous les tests</span>
+cd ha-config-auditor
+python -m pytest tests/ -v
+
+<span class="c-cm"># Un module spécifique</span>
+python -m pytest tests/test_refactoring_assistant.py -v
+
+<span class="c-cm"># Avec coverage</span>
+python -m pytest tests/ --cov=custom_components/config_auditor --cov-report=html
+
+<span class="c-cm"># Rapide (parallèle)</span>
+python -m pytest tests/ -n auto -q</pre>
+          </div>
+
+          <h2>Structure d'un test</h2>
+          <div class="code-wrap">
+            <div class="code-header">
+              <div class="code-dots">
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+              </div><span class="code-lang">python</span>
+            </div>
+            <pre><span class="c-kw">import</span> pytest
+<span class="c-kw">from</span> unittest.mock <span class="c-kw">import</span> AsyncMock, patch
+<span class="c-kw">from</span> .conftest <span class="c-kw">import</span> MockHass
+
+<span class="c-op">@pytest.mark.asyncio</span>
+<span class="c-kw">async def</span> <span class="c-op">test_device_id_in_target_fix</span>(tmp_path):
+    <span class="c-cm"># 1. Préparer les fixtures</span>
+    ra = make_refactoring_assistant(tmp_path, [AUTOMATION])
+
+    <span class="c-cm"># 2. Mocker les dépendances HA async</span>
+    ra._load_automation_by_id = AsyncMock(return_value=AUTOMATION)
+    ra._resolve_entity_id = AsyncMock(return_value=<span class="c-str">'light.salon'</span>)
+
+    <span class="c-cm"># 3. Exécuter</span>
+    result = <span class="c-kw">await</span> ra.preview_device_id_fix(<span class="c-str">"auto_001"</span>)
+
+    <span class="c-cm"># 4. Vérifier</span>
+    <span class="c-kw">assert</span> result[<span class="c-str">"success"</span>]
+    <span class="c-kw">assert</span> result[<span class="c-str">"changes_count"</span>] == <span class="c-num">1</span>
+    new_action = result[<span class="c-str">"changes"</span>][<span class="c-num">0</span>][<span class="c-str">"to"</span>]
+    <span class="c-kw">assert</span> <span class="c-str">"device_id"</span> <span class="c-kw">not in</span> new_action[<span class="c-str">"target"</span>]
+    <span class="c-kw">assert</span> new_action[<span class="c-str">"target"</span>][<span class="c-str">"entity_id"</span>] == <span class="c-str">'light.salon'</span></pre>
+          </div>
+
+          <h2>MockHass</h2>
+          <p>Le conftest fournit un <code>MockHass</code> minimal pour les tests sans HA réel :</p>
+          <div class="code-wrap">
+            <div class="code-header">
+              <div class="code-dots">
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+              </div><span class="code-lang">python · conftest.py</span>
+            </div>
+            <pre><span class="c-kw">class</span> MockHass:
+    <span class="c-kw">def</span> <span class="c-op">__init__</span>(self, config_dir=<span class="c-str">"/config"</span>):
+        self.config = SimpleNamespace(config_dir=config_dir)
+        self.states = {}
+        self.services = AsyncMock()
+
+    <span class="c-kw">async def</span> <span class="c-op">async_add_executor_job</span>(self, func, *args):
+        <span class="c-kw">return</span> func(*args)  <span class="c-cm"># Sync en test</span></pre>
+          </div>
+
+          <h2>Validation JS</h2>
+          <div class="code-wrap">
+            <div class="code-header">
+              <div class="code-dots">
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+              </div><span class="code-lang">bash</span>
+            </div>
+            <pre><span class="c-cm"># Syntaxe JavaScript</span>
+node --check www/haca-panel.js
+
+<span class="c-cm"># Build complet + vérifications</span>
+cd www && bash build.sh</pre>
+          </div>
+        </div>
+
+        <div class="en-content" style="display:none">
+          <span class="page-tag">Contributing</span>
+          <h1>Tests</h1>
+          <div class="code-wrap">
+            <div class="code-header">
+              <div class="code-dots">
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+              </div><span class="code-lang">bash</span>
+            </div>
+            <pre>pip install pytest pytest-asyncio homeassistant --break-system-packages
+cd ha-config-auditor
+python -m pytest tests/ -v
+python -m pytest tests/ --cov=custom_components/config_auditor --cov-report=html</pre>
+          </div>
+          <h2>Test structure</h2>
+          <div class="code-wrap">
+            <div class="code-header">
+              <div class="code-dots">
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+              </div><span class="code-lang">python</span>
+            </div>
+            <pre><span class="c-op">@pytest.mark.asyncio</span>
+<span class="c-kw">async def</span> <span class="c-op">test_fix</span>(tmp_path):
+    ra = make_refactoring_assistant(tmp_path, [AUTOMATION])
+    ra._resolve_entity_id = AsyncMock(return_value=<span class="c-str">'light.salon'</span>)
+    result = <span class="c-kw">await</span> ra.preview_device_id_fix(<span class="c-str">"auto_001"</span>)
+    <span class="c-kw">assert</span> result[<span class="c-str">"success"</span>]
+    <span class="c-kw">assert</span> result[<span class="c-str">"changes_count"</span>] == <span class="c-num">1</span></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════════════
+     PAGE: CONTRIBUTING
+════════════════════════════════════════ -->
+    <div id="page-contributing" class="page">
+      <div class="doc-section">
+        <div class="fr-content">
+          <span class="page-tag">Contribution</span>
+          <h1>Contribuer à H.A.C.A</h1>
+          <p class="lead">Toute contribution est bienvenue — bug fix, nouvelle fonctionnalité, documentation ou
+            traduction.</p>
+
+          <h2>Workflow Git</h2>
+          <div class="code-wrap">
+            <div class="code-header">
+              <div class="code-dots">
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+              </div><span class="code-lang">bash</span>
+            </div>
+            <pre><span class="c-cm"># 1. Fork + clone</span>
+git clone https://github.com/VOTRE_USERNAME/ha-config-auditor.git
+cd ha-config-auditor
+
+<span class="c-cm"># 2. Créer une branche feature</span>
+git checkout -b feature/ma-fonctionnalite
+<span class="c-cm"># ou</span>
+git checkout -b fix/description-du-bug
+
+<span class="c-cm"># 3. Développer et tester</span>
+python -m pytest tests/ -v
+
+<span class="c-cm"># 4. Commit (Conventional Commits)</span>
+git commit -m <span class="c-str">"feat: add support for zone.reload in automation analyzer"</span>
+git commit -m <span class="c-str">"fix: device_id_in_target not detected in preview"</span>
+
+<span class="c-cm"># 5. Push et Pull Request</span>
+git push origin feature/ma-fonctionnalite
+<span class="c-cm"># → Ouvrir une PR sur GitHub</span></pre>
+          </div>
+
+          <h2>Convention de commits</h2>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Préfixe</th>
+                  <th>Usage</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>feat:</code></td>
+                  <td>Nouvelle fonctionnalité</td>
+                </tr>
+                <tr>
+                  <td><code>fix:</code></td>
+                  <td>Correction de bug</td>
+                </tr>
+                <tr>
+                  <td><code>docs:</code></td>
+                  <td>Documentation uniquement</td>
+                </tr>
+                <tr>
+                  <td><code>test:</code></td>
+                  <td>Ajout/modification de tests</td>
+                </tr>
+                <tr>
+                  <td><code>refactor:</code></td>
+                  <td>Refactoring sans changement de comportement</td>
+                </tr>
+                <tr>
+                  <td><code>perf:</code></td>
+                  <td>Amélioration de performance</td>
+                </tr>
+                <tr>
+                  <td><code>chore:</code></td>
+                  <td>Maintenance (deps, build, CI)</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h2>Checklist Pull Request</h2>
+          <ul class="checklist">
+            <li>Tests unitaires ajoutés pour les nouvelles fonctionnalités</li>
+            <li><code>python -m pytest tests/</code> passe sans erreur (0 failed)</li>
+            <li><code>node --check www/haca-panel.js</code> si le JS a été modifié</li>
+            <li>Traductions FR et EN mises à jour si nouveaux textes UI</li>
+            <li><code>CHANGELOG.md</code> mis à jour</li>
+            <li>Pas de secrets ou données personnelles dans le code</li>
+            <li>Description claire de la PR et du problème résolu</li>
+          </ul>
+
+          <h2>Bonnes pratiques HA</h2>
+          <div class="adm adm-tip"><span class="adm-icon">1️⃣</span>
+            <div class="adm-body"><strong>Toujours async</strong> — HA est entièrement asynchrone. Toute opération
+              bloquante passe par <code>hass.async_add_executor_job()</code>.</div>
+          </div>
+          <div class="adm adm-tip"><span class="adm-icon">2️⃣</span>
+            <div class="adm-body"><strong>Registre d'entités</strong> — Utilisez
+              <code>entity_registry.async_get(entity_id)</code> pour les métadonnées plutôt que
+              <code>hass.states</code>.
+            </div>
+          </div>
+          <div class="adm adm-tip"><span class="adm-icon">3️⃣</span>
+            <div class="adm-body"><strong>Logging</strong> — Loguez toujours les exceptions avec
+              <code>_LOGGER.error("...", exc_info=True)</code> en mode debug.
+            </div>
+          </div>
+          <div class="adm adm-tip"><span class="adm-icon">4️⃣</span>
+            <div class="adm-body"><strong>Config Entry</strong> — Respectez le cycle : <code>async_setup_entry</code> /
+              <code>async_unload_entry</code> / <code>async_migrate_entry</code>.
+            </div>
+          </div>
+          <div class="adm adm-tip"><span class="adm-icon">5️⃣</span>
+            <div class="adm-body"><strong>Services</strong> — Validez toujours les inputs avec <code>voluptuous</code>
+              dans le schéma du service.</div>
+          </div>
+
+          <h2>Liens utiles</h2>
+          <ul>
+            <li><a href="https://github.com/JeanMarc-Labs/ha-config-auditor" target="_blank">Repository GitHub</a></li>
+            <li><a href="https://github.com/JeanMarc-Labs/ha-config-auditor/issues" target="_blank">Signaler un bug</a>
+            </li>
+            <li><a href="https://developers.home-assistant.io" target="_blank">Documentation HA Developer</a></li>
+            <li><a href="https://community.home-assistant.io" target="_blank">Communauté Home Assistant</a></li>
+          </ul>
+        </div>
+
+        <div class="en-content" style="display:none">
+          <span class="page-tag">Contributing</span>
+          <h1>Contributing to H.A.C.A</h1>
+          <p class="lead">All contributions welcome — bug fixes, features, documentation or translations.</p>
+          <h2>Git workflow</h2>
+          <div class="code-wrap">
+            <div class="code-header">
+              <div class="code-dots">
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+              </div><span class="code-lang">bash</span>
+            </div>
+            <pre>git clone https://github.com/YOUR_USERNAME/ha-config-auditor.git
+git checkout -b feature/my-feature
+python -m pytest tests/ -v
+git commit -m <span class="c-str">"feat: add new analyzer for xyz"</span>
+git push origin feature/my-feature</pre>
+          </div>
+          <h2>Commit convention</h2>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Prefix</th>
+                  <th>Use</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>feat:</code></td>
+                  <td>New feature</td>
+                </tr>
+                <tr>
+                  <td><code>fix:</code></td>
+                  <td>Bug fix</td>
+                </tr>
+                <tr>
+                  <td><code>docs:</code></td>
+                  <td>Documentation only</td>
+                </tr>
+                <tr>
+                  <td><code>test:</code></td>
+                  <td>Tests added/modified</td>
+                </tr>
+                <tr>
+                  <td><code>refactor:</code></td>
+                  <td>Code refactoring</td>
+                </tr>
+                <tr>
+                  <td><code>chore:</code></td>
+                  <td>Maintenance</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <h2>PR Checklist</h2>
+          <ul class="checklist">
+            <li>Unit tests added for new features</li>
+            <li><code>python -m pytest tests/</code> passes (0 failed)</li>
+            <li><code>node --check www/haca-panel.js</code> if JS was modified</li>
+            <li>FR and EN translations updated for new UI strings</li>
+            <li><code>CHANGELOG.md</code> updated</li>
+            <li>No secrets or personal data in the code</li>
+          </ul>
+          <h2>HA Best Practices</h2>
+          <div class="adm adm-tip"><span class="adm-icon">1️⃣</span>
+            <div class="adm-body"><strong>Always async</strong> — All blocking I/O via
+              <code>hass.async_add_executor_job()</code>.
+            </div>
+          </div>
+          <div class="adm adm-tip"><span class="adm-icon">2️⃣</span>
+            <div class="adm-body"><strong>Entity registry</strong> — Use
+              <code>entity_registry.async_get(entity_id)</code> for metadata.
+            </div>
+          </div>
+          <div class="adm adm-tip"><span class="adm-icon">3️⃣</span>
+            <div class="adm-body"><strong>Config Entry lifecycle</strong> — Implement <code>async_setup_entry</code> /
+              <code>async_unload_entry</code> properly.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main><!-- /content -->
+
+  <script>
+    // ─── STATE ───────────────────────────────────────────
+    let currentLang = localStorage.getItem('haca-lang') || 'fr';
+    let currentPage = 'home';
+
+    // ─── NAVIGATION ──────────────────────────────────────
+    function nav(page, anchor) {
+      // Hide all pages
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      // Show target
+      const target = document.getElementById('page-' + page);
+      if (target) target.classList.add('active');
+      currentPage = page;
+
+      // Update nav active state
+      document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.nav-item, .nav-sub').forEach(b => {
+        if (b.getAttribute('onclick') && b.getAttribute('onclick').includes("nav('" + page + "'")) {
+          b.classList.add('active');
+        }
+      });
+
+      // Scroll to top or anchor
+      window.scrollTo(0, 0);
+      if (anchor) {
+        setTimeout(() => {
+          const el = document.getElementById(anchor);
+          if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 50);
+      }
+
+      // Close mobile sidebar
+      if (window.innerWidth <= 900) {
+        toggleSidebar(false);
+      }
+    }
+
+    // ─── LANGUAGE ────────────────────────────────────────
+    function setLang(lang) {
+      currentLang = lang;
+      localStorage.setItem('haca-lang', lang);
+
+      // Update buttons
+      document.getElementById('btn-fr').classList.toggle('active', lang === 'fr');
+      document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+      document.documentElement.lang = lang;
+
+      // Show/hide content
+      document.querySelectorAll('.fr-content').forEach(el => el.style.display = lang === 'fr' ? '' : 'none');
+      document.querySelectorAll('.en-content').forEach(el => el.style.display = lang === 'en' ? '' : 'none');
+
+      // Update sidebar labels
+      document.querySelectorAll('[data-fr]').forEach(el => {
+        el.textContent = lang === 'fr' ? el.getAttribute('data-fr') : el.getAttribute('data-en');
+      });
+      document.querySelectorAll('[data-fr] span').forEach(el => {
+        if (!el.getAttribute('data-fr')) return;
+        el.textContent = lang === 'fr' ? el.getAttribute('data-fr') : el.getAttribute('data-en');
+      });
+
+      // Also update span children with data attributes
+      document.querySelectorAll('span[data-fr]').forEach(el => {
+        el.textContent = lang === 'fr' ? el.getAttribute('data-fr') : el.getAttribute('data-en');
+      });
+    }
+
+    // ─── TAB PANELS ──────────────────────────────────────
+    function showTab(prefix, name) {
+      document.querySelectorAll('[id^="' + prefix + '-"]').forEach(el => el.classList.remove('active'));
+      const el = document.getElementById(prefix + '-' + name);
+      if (el) el.classList.add('active');
+
+      // Update tab buttons in current visible page
+      const activePage = document.querySelector('.page.active');
+      if (!activePage) return;
+      activePage.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      activePage.querySelectorAll('.tab-btn').forEach(b => {
+        if (b.getAttribute('onclick') && b.getAttribute('onclick').includes("'" + name + "'")) {
+          b.classList.add('active');
+        }
+      });
+    }
+
+    // ─── MOBILE MENU ─────────────────────────────────────
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+
+    function toggleSidebar(open) {
+      const isOpen = open !== undefined ? open : !sidebar.classList.contains('open');
+      sidebar.classList.toggle('open', isOpen);
+      if (overlay) overlay.classList.toggle('active', isOpen);
+    }
+
+    document.getElementById('menuToggle').addEventListener('click', () => toggleSidebar());
+    if (overlay) overlay.addEventListener('click', () => toggleSidebar(false));
+
+    // ─── INIT ─────────────────────────────────────────────
+    setLang(currentLang);
+    nav('home');
+  </script>
+</body>
+
+</html>
