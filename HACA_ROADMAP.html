@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>H.A.C.A — Roadmap</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e17;
+    --bg2: #0f1420;
+    --bg3: #141926;
+    --surface: #1a2035;
+    --border: rgba(255,255,255,0.07);
+    --border-bright: rgba(255,255,255,0.15);
+    --text: #e8edf5;
+    --text-muted: #6b7a96;
+    --text-dim: #3d4b63;
+    --accent: #00d4ff;
+    --accent2: #7c6fff;
+    --accent3: #ff6b6b;
+    --green: #00e5a0;
+    --yellow: #ffd060;
+    --orange: #ff9a3c;
+    --red: #ff4d6d;
+    --glow: rgba(0,212,255,0.15);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Outfit', sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── GRID BACKGROUND ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0; z-index: 0;
+    background-image:
+      linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+  }
+
+  /* ── NOISE TEXTURE ── */
+  body::after {
+    content: '';
+    position: fixed; inset: 0; z-index: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 256px;
+    pointer-events: none;
+    opacity: 0.4;
+  }
+
+  .wrap { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; padding: 0 32px; }
+
+  /* ── HERO ── */
+  .hero {
+    padding: 100px 0 80px;
+    text-align: center;
+    position: relative;
+  }
+
+  .hero-glow {
+    position: absolute;
+    top: 0; left: 50%; transform: translateX(-50%);
+    width: 600px; height: 400px;
+    background: radial-gradient(ellipse, rgba(0,212,255,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(0,212,255,0.08);
+    border: 1px solid rgba(0,212,255,0.25);
+    border-radius: 100px;
+    padding: 6px 16px;
+    font-size: 12px; font-weight: 500; letter-spacing: 1.5px;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 32px;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  .hero-badge::before {
+    content: '';
+    width: 6px; height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    box-shadow: 0 0 8px var(--accent);
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.3; } }
+
+  .hero h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(52px, 8vw, 96px);
+    line-height: 1;
+    letter-spacing: -2px;
+    background: linear-gradient(135deg, #fff 30%, var(--accent) 70%, var(--accent2) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: fadeUp 0.6s 0.1s ease both;
+  }
+
+  .hero-sub {
+    font-size: 13px; letter-spacing: 4px; text-transform: uppercase;
+    color: var(--text-muted); margin-top: 8px;
+    font-weight: 300;
+    animation: fadeUp 0.6s 0.2s ease both;
+  }
+
+  .hero-desc {
+    max-width: 560px; margin: 28px auto 0;
+    color: var(--text-muted); font-size: 16px; line-height: 1.8;
+    animation: fadeUp 0.6s 0.3s ease both;
+  }
+
+  .hero-meta {
+    display: flex; align-items: center; justify-content: center; gap: 32px;
+    margin-top: 40px; flex-wrap: wrap;
+    animation: fadeUp 0.6s 0.4s ease both;
+  }
+
+  .meta-item {
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+  }
+  .meta-value {
+    font-family: 'DM Mono', monospace;
+    font-size: 28px; font-weight: 500;
+    color: var(--accent);
+  }
+  .meta-label {
+    font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--text-dim);
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── TIMELINE OVERVIEW ── */
+  .timeline-section {
+    padding: 60px 0;
+    border-top: 1px solid var(--border);
+  }
+
+  .section-label {
+    font-size: 11px; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 32px; font-weight: 500;
+  }
+
+  .timeline {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .tl-item {
+    background: var(--bg2);
+    padding: 24px 20px;
+    transition: background 0.2s;
+  }
+  .tl-item:hover { background: var(--surface); }
+
+  .tl-version {
+    font-family: 'DM Mono', monospace;
+    font-size: 20px; font-weight: 500;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+  .tl-name {
+    font-size: 13px; font-weight: 600;
+    color: var(--text); margin-bottom: 6px;
+  }
+  .tl-desc { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+
+  /* ── LEGEND ── */
+  .legend {
+    display: flex; flex-wrap: wrap; gap: 12px;
+    margin: 32px 0 16px;
+  }
+
+  .legend-item {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-size: 12px; color: var(--text-muted);
+  }
+
+  /* ── RELEASE BLOCKS ── */
+  .release {
+    margin: 48px 0;
+    opacity: 0; transform: translateY(24px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  .release.visible { opacity: 1; transform: translateY(0); }
+
+  .release-header {
+    display: flex; align-items: baseline; gap: 16px;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .release-version {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px; font-weight: 500;
+    color: var(--accent);
+    background: rgba(0,212,255,0.08);
+    border: 1px solid rgba(0,212,255,0.2);
+    border-radius: 6px;
+    padding: 3px 10px;
+    white-space: nowrap;
+  }
+
+  .release-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 28px;
+    color: var(--text);
+  }
+
+  /* ── FEATURE CARDS ── */
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 16px;
+  }
+
+  .feature-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+    cursor: default;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .feature-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0;
+    width: 3px; height: 100%;
+    background: var(--card-accent, var(--accent));
+    border-radius: 2px 0 0 2px;
+  }
+
+  .feature-card:hover {
+    border-color: var(--border-bright);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    transform: translateY(-2px);
+  }
+
+  .feature-card.star::after {
+    content: '⭐';
+    position: absolute; top: 16px; right: 16px;
+    font-size: 14px; opacity: 0.6;
+  }
+
+  .feature-header {
+    display: flex; align-items: flex-start; gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .feature-id {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px; color: var(--text-dim);
+    min-width: 28px; padding-top: 3px;
+  }
+
+  .feature-title {
+    font-size: 15px; font-weight: 600;
+    color: var(--text); line-height: 1.4;
+    flex: 1;
+  }
+
+  .feature-body {
+    font-size: 13px; color: var(--text-muted);
+    line-height: 1.7; padding-left: 40px;
+  }
+
+  .feature-tags {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    margin-top: 14px; padding-left: 40px;
+  }
+
+  .tag {
+    font-size: 11px; font-weight: 500; letter-spacing: 0.5px;
+    border-radius: 4px; padding: 2px 8px;
+    border: 1px solid;
+  }
+
+  .tag-low    { color: var(--green);  border-color: rgba(0,229,160,0.3);  background: rgba(0,229,160,0.08); }
+  .tag-mid    { color: var(--yellow); border-color: rgba(255,208,96,0.3); background: rgba(255,208,96,0.08); }
+  .tag-high   { color: var(--red);    border-color: rgba(255,77,109,0.3);  background: rgba(255,77,109,0.08); }
+  .tag-rd     { color: var(--accent2);border-color: rgba(124,111,255,0.3);background: rgba(124,111,255,0.08); }
+  .tag-impact { color: var(--accent); border-color: rgba(0,212,255,0.3); background: rgba(0,212,255,0.08); }
+
+  /* ── FEATURE DETAIL LIST ── */
+  .detail-list {
+    list-style: none;
+    margin-top: 8px;
+  }
+  .detail-list li {
+    position: relative; padding-left: 16px;
+    font-size: 12px; color: var(--text-muted);
+    line-height: 1.6;
+    margin-bottom: 2px;
+  }
+  .detail-list li::before {
+    content: '→';
+    position: absolute; left: 0;
+    color: var(--text-dim);
+  }
+
+  /* ── MCP SPECIAL CARD ── */
+  .feature-card.mcp-card {
+    --card-accent: var(--accent2);
+    background: linear-gradient(135deg, var(--bg2) 0%, rgba(124,111,255,0.05) 100%);
+    grid-column: span 2;
+  }
+
+  .mcp-code {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px; line-height: 1.8;
+    color: var(--text-muted);
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin-top: 12px; margin-left: 40px;
+    overflow-x: auto;
+  }
+  .mcp-code .fn   { color: var(--accent); }
+  .mcp-code .arg  { color: var(--yellow); }
+  .mcp-code .ret  { color: var(--accent2); }
+  .mcp-code .cmt  { color: var(--text-dim); }
+
+  /* ── BACKLOG TABLE ── */
+  .backlog-section { padding: 48px 0; }
+
+  .backlog-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .backlog-table th {
+    text-align: left;
+    font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--text-dim);
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .backlog-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-muted);
+    vertical-align: middle;
+  }
+  .backlog-table tr:last-child td { border-bottom: none; }
+  .backlog-table tbody tr:hover td { background: rgba(255,255,255,0.02); }
+  .backlog-table .idx {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px; color: var(--text-dim);
+  }
+
+  /* ── PRIORITIES ── */
+  .priorities {
+    display: flex; flex-direction: column; gap: 12px;
+    margin-top: 24px;
+  }
+  .priority-item {
+    display: flex; align-items: center; gap: 16px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 20px;
+    transition: border-color 0.2s;
+  }
+  .priority-item:hover { border-color: var(--border-bright); }
+  .priority-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 24px; font-weight: 500;
+    color: var(--text-dim); min-width: 32px;
+  }
+  .priority-text { flex: 1; font-size: 14px; color: var(--text-muted); }
+  .priority-text strong { color: var(--text); }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 40px 0;
+    text-align: center;
+    color: var(--text-dim);
+    font-size: 12px; letter-spacing: 1px;
+  }
+  footer strong { color: var(--accent); }
+
+  /* ── NAV ── */
+  .toc {
+    position: sticky; top: 20px;
+    font-size: 12px;
+  }
+
+  /* ── SCROLL INDICATOR ── */
+  .scroll-bar {
+    position: fixed; top: 0; left: 0; height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    z-index: 100;
+    transition: width 0.1s;
+    box-shadow: 0 0 8px var(--accent);
+  }
+
+  /* ── DIVIDER ── */
+  .divider {
+    height: 1px; background: var(--border);
+    margin: 24px 0;
+  }
+
+  @media (max-width: 700px) {
+    .timeline { grid-template-columns: 1fr 1fr; }
+    .features-grid { grid-template-columns: 1fr; }
+    .feature-card.mcp-card { grid-column: span 1; }
+    .hero h1 { font-size: 48px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="scroll-bar" id="scrollBar"></div>
+
+<div class="wrap">
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="hero-glow"></div>
+    <div class="hero-badge">Roadmap 2026</div>
+    <h1>H.A.C.A</h1>
+    <p class="hero-sub">Home Assistant Config Auditor</p>
+    <p class="hero-desc">Vision produit & fonctionnalités à venir — de la détection étendue des issues à l'intégration MCP et aux agents IA proactifs.</p>
+    <div class="hero-meta">
+      <div class="meta-item"><span class="meta-value">37</span><span class="meta-label">Modules Python</span></div>
+      <div class="meta-item"><span class="meta-value">160</span><span class="meta-label">Tests</span></div>
+      <div class="meta-item"><span class="meta-value">5</span><span class="meta-label">Langues</span></div>
+      <div class="meta-item"><span class="meta-value">6</span><span class="meta-label">Versions planifiées</span></div>
+    </div>
+  </header>
+
+  <!-- TIMELINE -->
+  <section class="timeline-section">
+    <div class="section-label">Vue d'ensemble</div>
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-version">v1.2</div>
+        <div class="tl-name">Scan étendu</div>
+        <div class="tl-desc">Automations hors fichier, helpers, actions directes sur entités</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-version">v1.3</div>
+        <div class="tl-name">Scripts & Scènes</div>
+        <div class="tl-desc">Analyse approfondie, cycles, blueprints générés par IA</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-version">v1.4</div>
+        <div class="tl-name">IA & MCP</div>
+        <div class="tl-desc">Serveur MCP natif, agent proactif, multi-modèles</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-version">v2.0</div>
+        <div class="tl-name">Communauté</div>
+        <div class="tl-desc">Cloud benchmarking, marketplace de règles, GitHub</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LEGEND -->
+  <div class="legend">
+    <span class="legend-item"><span class="tag tag-low">🟢 Faible</span> Quelques heures</span>
+    <span class="legend-item"><span class="tag tag-mid">🟡 Moyen</span> 1–3 jours</span>
+    <span class="legend-item"><span class="tag tag-high">🔴 Élevé</span> Semaines</span>
+    <span class="legend-item"><span class="tag tag-rd">🧪 R&amp;D</span> Expérimental</span>
+    <span class="legend-item"><span class="tag tag-impact">⭐ Impact fort</span></span>
+  </div>
+
+  <!-- V1.2 -->
+  <section class="release" id="v12">
+    <div class="release-header">
+      <span class="release-version">v1.2</span>
+      <h2 class="release-title">Scan étendu &amp; Actions contextuelles</h2>
+    </div>
+    <div class="features-grid">
+
+      <div class="feature-card star" style="--card-accent: var(--accent);">
+        <div class="feature-header">
+          <span class="feature-id">1.1</span>
+          <span class="feature-title">Bouton « Ouvrir l'entité » sur les issues</span>
+        </div>
+        <div class="feature-body">
+          Chaque issue de type entité dispose d'un bouton qui ouvre directement la fenêtre info/config native de HA via <code>hass-more-info</code>. Pour les entités zombie, un bouton secondaire navigue vers la liste des entités avec filtre pré-rempli.
+        </div>
+        <div class="feature-tags">
+          <span class="tag tag-low">🟢 Faible</span>
+          <span class="tag tag-impact">⭐ Impact fort</span>
+        </div>
+      </div>
+
+      <div class="feature-card star" style="--card-accent: var(--accent);">
+        <div class="feature-header">
+          <span class="feature-id">1.2</span>
+          <span class="feature-title">Scan des automations hors <code>automations.yaml</code></span>
+        </div>
+        <div class="feature-body">
+          HA permet de déclarer des automations dans plusieurs emplacements non couverts actuellement :
+          <ul class="detail-list" style="margin-top:8px;">
+            <li><code>.storage/core.automation</code> (UI)</li>
+            <li><code>packages/*.yaml</code> via <code>homeassistant.packages</code></li>
+            <li><code>!include_dir_merge_list</code> dans la config</li>
+          </ul>
+          La source de chaque automation sera affichée dans l'interface.
+        </div>
+        <div class="feature-tags">
+          <span class="tag tag-mid">🟡 Moyen</span>
+          <span class="tag tag-impact">⭐ Impact fort</span>
+        </div>
+      </div>
+
+      <div class="feature-card" style="--card-accent: var(--green);">
+        <div class="feature-header">
+          <span class="feature-id">1.3</span>
+          <span class="feature-title">Analyse des <code>input_*</code> Helpers</span>
+        </div>
+        <div class="feature-body">
+          <ul class="detail-list">
+            <li>Helper non utilisé dans aucune automation/script → <span class="tag tag-low" style="display:inline;padding:1px 6px;">low</span></li>
+            <li><code>input_select</code> avec options dupliquées ou vides</li>
+            <li><code>input_number</code> avec <code>min &gt; max</code></li>
+            <li>Helpers référencés uniquement dans des automations désactivées</li>
+          </ul>
+        </div>
+        <div class="feature-tags">
+          <span class="tag tag-mid">🟡 Moyen</span>
+        </div>
+      </div>
+
+      <div class="feature-card" style="--card-accent: var(--yellow);">
+        <div class="feature-header">
+          <span class="feature-id">1.4</span>
+          <span class="feature-title">Analyse des <code>template</code> sensors</span>
+        </div>
+        <div class="feature-body">
+          <ul class="detail-list">
+            <li><code>states('sensor.x')</code> sans gestion de <code>unavailable</code></li>
+            <li><code>now()</code> sans <code>trigger: time_pattern</code> → recalcul constant</li>
+            <li>Templates qui se référencent mutuellement (cycle)</li>
+            <li><code>availability:</code> manquant sur une entité potentiellement offline</li>
+          </ul>
+        </div>
+        <div class="feature-tags">
+          <span class="tag tag-mid">🟡 Moyen</span>
+        </div>
+      </div>
+
+      <div class="feature-card" style="--card-accent: var(--text-dim);">
+        <div class="feature-header">
+          <span class="feature-id">1.5</span>
+          <span class="feature-title">Analyse des <code>timer:</code> helpers</span>
+        </div>
+        <div class="feature-body">
+          Timer référencé dans une automation mais jamais démarré, <code>duration: 0</code>, ou timer dans un trigger <code>timer.finished</code> sans action <code>timer.start</code> correspondante.
+        </div>
+        <div class="feature-tags">
+          <span class="tag tag-low">🟢 Faible</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- V1.3 -->
+  <section class="release" id="v13">
+    <div class="release-header">
+      <span class="release-version">v1.3</span>
+      <h2 class="release-title">Scripts &amp; Scènes avancés</h2>
+    </div>
+    <div class="features-grid">
+
+      <div class="feature-card star" style="--card-accent: var(--accent2);">
+        <div class="feature-header">
+          <span class="feature-id">2.1</span>
+          <span class="feature-title">Analyse de profondeur des scripts</span>
+        </div>
+        <div class="feature-body">
+          <ul class="detail-list">
+            <li>Détection des cycles <code>script_a → script_b → script_a</code></li>
+            <li>Profondeur d'appel &gt; 3 niveaux = issue medium</li>
+            <li>Scripts avec <code>mode: single</code> appelés en boucle rapide</li>
+            <li>Scripts jamais appelés → orphelins</li>
+          </ul>
+        </div>
+        <div class="feature-tags">
+          <span class="tag tag-mid">🟡 Moyen</span>
+          <span class="tag tag-impact">⭐ Impact fort</span>
+        </div>
+      </div>
+
+      <div class="feature-card" style="--card-accent: var(--green);">
+        <div class="feature-header">
+          <span class="feature-id">2.2</span>
+          <span class="feature-title">Analyse approfondie des scènes</span>
+        </div>
+        <div class="feature-body">
+          Scène référençant une entité <code>unavailable</code>, jamais activée en 90 jours, ou doublon exact d'une autre scène (mêmes entités et états).
+        </div>
+        <div class="feature-tags">
+          <span class="tag tag-low">🟢 Faible</span>
+        </div>
+      </div>
+
+      <div class="feature-card star" style="--card-accent: var(--accent);">
+        <div class="feature-header">
+          <span class="feature-id">2.3</span>
+          <span class="feature-title">Refactoring script → Blueprint IA</span>
+        </div>
+        <div class="feature-body">
+          Si un script est utilisé dans &gt; 3 automations avec des paramètres légèrement différents, HACA propose automatiquement de le transformer en blueprint réutilisable et génère le YAML complet via l'IA.
+        </div>
+        <div class="feature-tags">
+          <span class="tag tag-mid">🟡 Moyen</span>
+          <span class="tag tag-impact">⭐ Impact fort</span>
+        </div>
+      </div>
+
+      <div class="feature-card" style="--card-accent: var(--yellow);">
+        <div class="feature-header">
+          <span class="feature-id">2.4</span>
+          <span class="feature-title">Analyse des <code>groups</code></span>
+        </div>
+        <div class="feature-body">
+          Groupe vide, toutes entités <code>unavailable</code>, référençant des entités inexistantes, ou groupes imbriqués &gt; 2 niveaux (impact performance).
+        </div>
+        <div class="feature-tags">
+          <span class="tag tag-mid">🟡 Moyen</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- V1.4 -->
+  <section class="release" id="v14">
+    <div class="release-header">
+      <span class="release-version">v1.4</span>
+      <h2 class="release-title">Intelligence Artificielle &amp; MCP</h2>
+    </div>
+    <div class="features-grid">
+
+      <div class="feature-card mcp-card star">
+        <div class="feature-header">
+          <span class="feature-id">3.1</span>
+          <span class="feature-title">Serveur MCP natif HACA</span>
+        </div>
+        <div class="feature-body">
+          Exposer HACA comme un serveur <strong>Model Context Protocol</strong> pour permettre à n'importe quel agent IA compatible (Claude Code, Cursor, Copilot…) d'interroger la config HA depuis l'extérieur. Un développeur peut demander à Claude : <em>« Quelles sont les issues critiques de ma config ? »</em> sans ouvrir l'interface web.
+        </div>
+        <div class="mcp-code">
+<span class="fn">haca_get_issues</span>(<span class="arg">severity?</span>, <span class="arg">type?</span>) <span class="ret">→ liste filtrée</span><br>
+<span class="fn">haca_get_score</span>() <span class="ret">→ score global</span><br>
+<span class="fn">haca_get_automation</span>(<span class="arg">entity_id</span>) <span class="ret">→ YAML</span><br>
+<span class="fn">haca_fix_suggestion</span>(<span class="arg">issue_id</span>) <span class="ret">→ proposition</span><br>
+<span class="fn">haca_apply_fix</span>(<span class="arg">issue_id</span>, <span class="arg">dry_run?</span>) <span class="ret">→ résultat</span><br>
+<span class="fn">haca_get_batteries</span>() <span class="ret">→ état batteries</span><br>
+<span class="fn">haca_explain_issue</span>(<span class="arg">issue_id</span>) <span class="ret">→ explication IA</span>
+        </div>
+        <div class="feature-tags">
+          <span class="tag tag-high">🔴 Élevé</span>
+          <span class="tag tag-impact">⭐ Impact fort</span>
+        </div>
+      </div>
+
+      <div class="feature-card star" style="--card-accent: var(--orange);">
+        <div class="feature-header">
+          <span class="feature-id">3.2</span>
+          <span class="feature-title">Agent IA proactif</span>
+        </div>
+        <div class="feature-body">
+          <ul class="detail-list">
+            <li>Analyse les nouveaux événements HA en arrière-plan</li>
+            <li>Corrèle les issues entre elles</li>
+            <li>Notification de synthèse hebdomadaire avec tendances</li>
+            <li>Apprend les préférences (suggestions acceptées/refusées)</li>
+          </ul>
+        </div>
+        <div class="feature-tags">
+          <span class="tag tag-high">🔴 Élevé</span>
+          <span class="tag tag-impact">⭐ Impact fort</span>
+        </div>
+      </div>
+
+      <div class="feature-card" style="--card-accent: var(--accent2);">
+        <div class="feature-header">
+          <span class="feature-id">3.3</span>
+          <span class="feature-title">IA multi-modèles avec fallback</span>
+        </div>
+        <div class="feature-body">
+          Détection automatique du modèle disponible (OpenAI → Gemini → Ollama local → fallback), cache des explications IA, estimation du coût en tokens avant appel.
+        </div>
+        <div class="feature-tags">
+          <span class="tag tag-mid">🟡 Moyen</span>
+        </div>
+      </div>
+
+      <div class="feature-card star" style="--card-accent: var(--accent);">
+        <div class="feature-header">
+          <span class="feature-id">3.4</span>
+          <span class="feature-title">Chat IA avec contexte complet</span>
+        </div>
+        <div class="feature-body">
+          Injection du YAML des automations citées, corrections applicables directement depuis le chat, historique persistant, commandes slash : <code>/scan</code> <code>/fix all low</code> <code>/explain automation.nom</code>, mode « audit guidé ».
+        </div>
+        <div class="feature-tags">
+          <span class="tag tag-mid">🟡 Moyen</span>
+          <span class="tag tag-impact">⭐ Impact fort</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- V1.5 -->
+  <section class="release" id="v15">
+    <div class="release-header">
+      <span class="release-version">v1.5</span>
+      <h2 class="release-title">Monitoring avancé &amp; Prédiction</h2>
+    </div>
+    <div class="features-grid">
+
+      <div class="feature-card star" style="--card-accent: var(--green);">
+        <div class="feature-header">
+          <span class="feature-id">4.1</span>
+          <span class="feature-title">Prédiction de pannes batterie</span>
+        </div>
+        <div class="feature-body">
+          Régression linéaire sur 30 jours de niveaux batterie pour prédire la date de remplacement. Alerte J-7, graphe de tendance par appareil, export CSV.
+        </div>
+        <div class="feature-tags">
+          <span class="tag tag-high">🔴 Élevé</span>
+          <span class="tag tag-impact">⭐ Impact fort</span>
+        </div>
+      </div>
+
+      <div class="feature-card" style="--card-accent: var(--yellow);">
+        <div class="feature-header">
+          <span class="feature-id">4.2</span>
+          <span class="feature-title">Heat map de complexité par zone</span>
+        </div>
+        <div class="feature-body">
+          Visualisation de la complexité des automations par <code>area</code>. Quelles pièces sont les plus risquées ? Quelles automations couvrent plusieurs zones ?
+        </div>
+        <div class="feature-tags">
+          <span class="tag tag-mid">🟡 Moyen</span>
+        </div>
+      </div>
+
+      <div class="feature-card" style="--card-accent: var(--orange);">
+        <div class="feature-header">
+          <span class="feature-id">4.3</span>
+          <span class="feature-title">Impact DB Recorder par automation</span>
+        </div>
+        <div class="feature-body">
+          Top 10 des automations les plus gourmandes en écriture, suggestions <code>recorder.exclude</code>, estimation de la réduction de taille DB si appliquées.
+        </div>
+        <div class="feature-tags">
+          <span class="tag tag-low">🟢 Faible</span>
+        </div>
+      </div>
+
+      <div class="feature-card star" style="--card-accent: var(--accent2);">
+        <div class="feature-header">
+          <span class="feature-id">4.4</span>
+          <span class="feature-title">Timeline diff dans History</span>
+        </div>
+        <div class="feature-body">
+          Timeline verticale des scans — clic sur un point = diff des issues par rapport au scan précédent (nouvelles en rouge, résolues en vert). Export PDF avec annotations.
+        </div>
+        <div class="feature-tags">
+          <span class="tag tag-mid">🟡 Moyen</span>
+          <span class="tag tag-impact">⭐ Impact fort</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- V2.0 -->
+  <section class="release" id="v20">
+    <div class="release-header">
+      <span class="release-version">v2.0</span>
+      <h2 class="release-title">Écosystème communautaire</h2>
+    </div>
+    <div class="features-grid">
+
+      <div class="feature-card star" style="--card-accent: var(--red);">
+        <div class="feature-header">
+          <span class="feature-id">5.1</span>
+          <span class="feature-title">HACA Cloud — Benchmarking anonymisé</span>
+        </div>
+        <div class="feature-body">
+          Service opt-in : « Votre score est dans le top 23% des installations HA ». Patterns d'issues fréquents, suggestions basées sur installations similaires.
+        </div>
+        <div class="feature-tags">
+          <span class="tag tag-high">🔴 Élevé</span>
+          <span class="tag tag-rd">🧪 R&amp;D</span>
+          <span class="tag tag-impact">⭐ Impact fort</span>
+        </div>
+      </div>
+
+      <div class="feature-card" style="--card-accent: var(--accent2);">
+        <div class="feature-header">
+          <span class="feature-id">5.2</span>
+          <span class="feature-title">Marketplace de règles HACA</span>
+        </div>
+        <div class="feature-body">
+          Règles personnalisées publiées par la communauté, import depuis GitHub Gist, notation. HACA les intègre après validation.
+        </div>
+        <div class="feature-tags">
+          <span class="tag tag-high">🔴 Élevé</span>
+          <span class="tag tag-rd">🧪 R&amp;D</span>
+        </div>
+      </div>
+
+      <div class="feature-card star" style="--card-accent: var(--yellow);">
+        <div class="feature-header">
+          <span class="feature-id">5.3</span>
+          <span class="feature-title">Intégration GitHub / GitLab</span>
+        </div>
+        <div class="feature-body">
+          Commit automatique avant chaque fix, diff des derniers commits dans l'UI, webhook pour déclencher un scan HACA à chaque push.
+        </div>
+        <div class="feature-tags">
+          <span class="tag tag-mid">🟡 Moyen</span>
+          <span class="tag tag-impact">⭐ Impact fort</span>
+        </div>
+      </div>
+
+      <div class="feature-card star" style="--card-accent: var(--accent);">
+        <div class="feature-header">
+          <span class="feature-id">5.4</span>
+          <span class="feature-title">Widget custom card pour dashboard HA</span>
+        </div>
+        <div class="feature-body">
+          Gauge du score de santé, compteurs par sévérité, indicateur batterie critique — intégrable dans n'importe quel dashboard HA.
+        </div>
+        <div class="feature-tags">
+          <span class="tag tag-mid">🟡 Moyen</span>
+          <span class="tag tag-impact">⭐ Impact fort</span>
+        </div>
+      </div>
+
+      <div class="feature-card" style="--card-accent: var(--green);">
+        <div class="feature-header">
+          <span class="feature-id">5.5</span>
+          <span class="feature-title">Mode « Explication débutants »</span>
+        </div>
+        <div class="feature-body">
+          Toggle qui adapte le langage : du message technique actuel vers un message accessible avec contexte et explication d'impact en langage naturel.
+        </div>
+        <div class="feature-tags">
+          <span class="tag tag-low">🟢 Faible</span>
+        </div>
+      </div>
+
+      <div class="feature-card" style="--card-accent: var(--orange);">
+        <div class="feature-header">
+          <span class="feature-id">5.6</span>
+          <span class="feature-title">Notifications Telegram / Discord</span>
+        </div>
+        <div class="feature-body">
+          Envoi direct (bot Telegram, webhook Discord), format riche avec score et top 3 issues critiques, digest hebdomadaire programmable.
+        </div>
+        <div class="feature-tags">
+          <span class="tag tag-low">🟢 Faible</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- BACKLOG TECHNIQUE -->
+  <section class="backlog-section release" id="backlog">
+    <div class="section-label">Backlog technique</div>
+    <table class="backlog-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Description</th>
+          <th>Effort</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="idx">T1</td><td>Tests e2e avec <code>pytest-homeassistant-custom-component</code></td><td><span class="tag tag-high">🔴</span></td></tr>
+        <tr><td class="idx">T2</td><td>CI/CD GitHub Actions : lint + tests + release auto</td><td><span class="tag tag-mid">🟡</span></td></tr>
+        <tr><td class="idx">T3</td><td>Migration <code>DataUpdateCoordinator</code> v2 avec interval adaptatif</td><td><span class="tag tag-mid">🟡</span></td></tr>
+        <tr><td class="idx">T4</td><td>Support <code>async_migrate_entry</code> pour migrations de schéma</td><td><span class="tag tag-low">🟢</span></td></tr>
+        <tr><td class="idx">T5</td><td>Profiling mémoire — détecter les fuites sur longs uptime</td><td><span class="tag tag-mid">🟡</span></td></tr>
+        <tr><td class="idx">T6</td><td>API REST publique en complément WebSocket</td><td><span class="tag tag-mid">🟡</span></td></tr>
+        <tr><td class="idx">T7</td><td>Traductions : DE, NL, PT, ES, IT, CS, HU</td><td><span class="tag tag-low">🟢</span></td></tr>
+        <tr><td class="idx">T8</td><td>Migration WebComponent vers Lit Element</td><td><span class="tag tag-high">🔴</span></td></tr>
+        <tr><td class="idx">T9</td><td>Dark mode natif CSS avec <code>prefers-color-scheme</code></td><td><span class="tag tag-low">🟢</span></td></tr>
+        <tr><td class="idx">T10</td><td>Chargement dynamique des traductions sans rebuild JS</td><td><span class="tag tag-low">🟢</span></td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- PRIORITIES -->
+  <section class="release" id="priorities" style="padding-bottom:80px;">
+    <div class="section-label">Priorités suggérées — v1.2</div>
+    <div class="priorities">
+      <div class="priority-item">
+        <span class="priority-num">01</span>
+        <span class="priority-text"><strong>Bouton « Ouvrir l'entité »</strong> — impact immédiat, effort minimal, change le workflow de correction</span>
+        <span class="tag tag-low">🟢</span>
+      </div>
+      <div class="priority-item">
+        <span class="priority-num">02</span>
+        <span class="priority-text"><strong>Scan automations étendues</strong> — corrige un angle mort majeur, toutes les automations UI non scannées actuellement</span>
+        <span class="tag tag-mid">🟡</span>
+      </div>
+      <div class="priority-item">
+        <span class="priority-num">03</span>
+        <span class="priority-text"><strong>Analyse input_* helpers</strong> — classe d'erreurs fréquente, infrastructure déjà en place</span>
+        <span class="tag tag-mid">🟡</span>
+      </div>
+      <div class="priority-item">
+        <span class="priority-num">04</span>
+        <span class="priority-text"><strong>Serveur MCP natif</strong> — différenciation forte dans l'écosystème, HACA devient un outil de développement</span>
+        <span class="tag tag-high">🔴</span>
+      </div>
+      <div class="priority-item">
+        <span class="priority-num">05</span>
+        <span class="priority-text"><strong>Widget dashboard HA</strong> — visibilité permanente du score sans ouvrir le panel</span>
+        <span class="tag tag-mid">🟡</span>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="wrap">
+    <strong>H.A.C.A</strong> — Home Assistant Config Auditor &nbsp;·&nbsp; Roadmap v1.0 &nbsp;·&nbsp; 2026
+  </div>
+</footer>
+
+<script>
+  // Scroll progress bar
+  window.addEventListener('scroll', () => {
+    const pct = window.scrollY / (document.body.scrollHeight - window.innerHeight) * 100;
+    document.getElementById('scrollBar').style.width = pct + '%';
+  });
+
+  // Scroll reveal
+  const releases = document.querySelectorAll('.release');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.07 });
+  releases.forEach(r => observer.observe(r));
+</script>
+</body>
+</html>
