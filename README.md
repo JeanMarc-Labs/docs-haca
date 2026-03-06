@@ -3,3 +3,5 @@
 #The Landing Page : https://jeanmarc-labs.github.io/docs-haca/
 
 #The Documentation himself : https://jeanmarc-labs.github.io/docs-haca/documentation.html
+
+#The RoadMap 2026 : https://jeanmarc-labs.github.io/docs-haca/roadmap.html
